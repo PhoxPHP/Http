@@ -367,7 +367,7 @@ class Builder
 	* @access 	private
 	* @return 	Object
 	*/
-	private function resolveRoute(array $routeArray=[], $prefix="") : StdClass \
+	private function resolveRoute(array $routeArray=[], $prefix="") : StdClass
 	{
 		$response = new StdClass();
 		// Spliting url segments into array....
