@@ -2,11 +2,12 @@
 ###############################################
 # This file is part of phoxphp framework.
 ################################################
-namespace Package\Http;
+namespace Kit\Http;
 
-use Package\Http\Request\RequestManager;
+use Kit\Http\Request\RequestManager;
 
-class Response {
+class Response
+{
 	
 	/**
 	* @var 		$request
@@ -35,13 +36,16 @@ class Response {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(RequestManager $request, $body='', $headers=null) {
+	public function __construct(RequestManager $request, $body='', $headers=null)
+	{
 		$this->request = (Object) $request->getReponse($this);
 		$this->body = $body;
 		$this->headers = $headers;
 
 		if (gettype($headers) == 'string') {
+
 			$this->headers = explode("\n", $headers);
+		
 		}
 	}
 
@@ -53,7 +57,8 @@ class Response {
 	* @access 	public
 	* @return 	String
 	*/
-	public function setHeader($key='', $value='') {
+	public function setHeader($key='', $value='')
+	{
 		$this->headers[$key] = $value;
 	}
 
@@ -64,7 +69,8 @@ class Response {
 	* @access 	public
 	* @return 	String
 	*/
-	public function body($setDecode=false) {
+	public function body($setDecode=false)
+	{
 		$body = $this->body;
 		return ($setDecode == true) ? html_entity_decode($body) : $body;
 	}
@@ -75,14 +81,19 @@ class Response {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function statusCode() {
+	public function statusCode()
+	{
 		if (!isset($this->request->http_code)) {
-			$this->request->http_code = '';
 			
+			$this->request->http_code = '';
 			$httpCodeSegment = $this->headers[0];
+
 			$preg = preg_match("/[0-9][0-9][0-9]/", $httpCodeSegment, $match);
+
 			if ($preg) {
+
 				$this->request->http_code = $match[0];
+
 			}
 		}
 
@@ -96,9 +107,14 @@ class Response {
 	* @access 	public
 	* @return 	String
 	*/
-	public function contentType($contentType='') {
-		if ('' !== $contentType)
+	public function contentType($contentType='')
+	{
+		if ('' !== $contentType) {
+
 			$this->request->content_type = $contentType;
+		
+		}
+		
 		return $this->request->content_type;
 	}
 
@@ -108,7 +124,8 @@ class Response {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function contentLength() {
+	public function contentLength()
+	{
 		return $this->request->download_content_length;
 	}
 
@@ -128,7 +145,8 @@ class Response {
 	* @access 	public
 	* @return 	Double
 	*/
-	public function ip() {
+	public function ip()
+	{
 		return $this->request->primary_ip;
 	}
 
@@ -138,7 +156,8 @@ class Response {
 	* @access 	public
 	* @return 	Double
 	*/
-	public function clientIp() {
+	public function clientIp()
+	{
 		return $this->request->local_ip;
 	}
 
@@ -148,7 +167,8 @@ class Response {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function primaryPort() {
+	public function primaryPort()
+	{
 		return $this->request->primary_port;
 	}
 
@@ -159,7 +179,8 @@ class Response {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function localPort() {
+	public function localPort()
+	{
 		return $this->request->local_port;
 	}	
 
@@ -169,7 +190,8 @@ class Response {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function json() {
+	public function json()
+	{
 		return json_decode($this->body());
 	}
 
@@ -179,7 +201,8 @@ class Response {
 	* @access 	public
 	* @return 	Array
 	*/
-	public function getAllHeaders() {
+	public function getAllHeaders()
+	{
 		return $this->headers;
 	}
 
@@ -187,13 +210,18 @@ class Response {
 	* @access 	public
 	* @return 	void
 	*/
-	public function send() {
+	public function send()
+	{
 		if (sizeof($this->headers) > 1) {
+		
 			return null;
+		
 		}
 
 		foreach(array_keys($this->headers) as $key) {
+
 			header("$key: $this->headers[$key]");
+		
 		}
 	}
 
@@ -202,15 +230,20 @@ class Response {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getHeader($key='') {
+	public function getHeader($key='')
+	{
 		(Boolean) $responseheader = null;
 		(Array) $headers = $this->headers;
 		$header = array_map([$this, 'resolveHeaderName'], $headers);
 
 		foreach($header as $value) {
+
 			if (isset($value[$key])) {
+			
 				(String) $responseheader = $value[$key];
+			
 			}
+
 		}
 
 		return $responseheader;
@@ -223,7 +256,8 @@ class Response {
 	* @access 	public
 	* @return 	void
 	*/
-	public function setResponseCode($code=404) {
+	public function setResponseCode($code=404)
+	{
 		http_response_code($code);
 	}
 
@@ -232,14 +266,18 @@ class Response {
 	* @access 	private
 	* @return 	Array
 	*/
-	private function resolveHeaderName($string='') {
+	private function resolveHeaderName($string='')
+	{
 		(Array) $resolvedHeader = [];
 
 		if (preg_match("/.*[a-zA-Z0-9]: (.*?)/", $string, $match)) {
+
 			$key = $match[0];
 			$value = str_replace($key, "", $string);
+			
 			$key = str_replace(': ', '', $key);
 			$resolvedHeader[$key] = $value;
+
 		}
 
 		return $resolvedHeader;

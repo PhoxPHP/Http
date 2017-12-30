@@ -2,13 +2,13 @@
 ###############################################
 # This file is part of phoxphp framework.
 ################################################
-namespace Package\Http\Request;
+namespace Kit\Http\Request;
 
 use StdClass;
 use Exception;
-use Package\Http\Response;
-use Package\Http\Request\ProxyManager;
-use Package\Http\Request\Exceptions\InvalidAuthenticationTypeException;
+use Kit\Http\Response;
+use Kit\Http\Request\ProxyManager;
+use Kit\Http\Request\Exceptions\InvalidAuthenticationTypeException;
 
 class RequestManager
 {
@@ -647,23 +647,33 @@ class RequestManager
 	private function doRequest() : Response
 	{
 		if (!in_array($this->method, array_values($this->requestMethods))) {
+
 			throw new Exception(sprintf("Unresolved method %s", $this->method));
+		
 		}
 
 		$this->method = $this->requestMethods[strtolower($this->method)];
+		
 		if (false == RequestManager::$curlRequest) {
+
 			return $this->doFileRequest();
+
 		}
 
 		(Array)  $headers = $this->resolveHeaders();
+
 		(String) $customRequest = '';
 
 		if (!empty($this->requestParameters)) {
+
 			$this->url = $this->buildUrl($this->url, $this->requestParameters);
+
 		}
 
 		if (!function_exists('curl_init') || !extension_loaded('curl')) {
+
 			throw new \RuntimeException('Curl extension is not available.');
+
 		}
 
 		$this->curlChannel = curl_init($this->url);
@@ -673,36 +683,52 @@ class RequestManager
 
 		// Setting post fields if method is 'POST' or 'PUT'
 		if ($this->method == 'POST' || $this->method == 'PUT' || $this->method == 'DELETE') {
+
 			curl_setopt($this->curlChannel, CURLOPT_POST, 1);
+
 			curl_setopt($this->curlChannel, CURLOPT_POSTFIELDS, http_build_query($this->requestParameters));
 
 			// If no content-type is specified, set an automatic content type.
 			if (!isset($this->headers['Content-type']) || !isset($this->headers['Content-Type']) || !isset($this->headers['content-type'])) {
+
 				$this->headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
 			}
+
 		}
 
 		// Is disableSSL property true? tell CURL to disable ssl.
 		if (true == RequestManager::$disableSSL) {
+
 			curl_setopt($this->curlChannel, CURLOPT_SSL_VERIFYPEER, false);
+			
 			curl_setopt($this->curlChannel, CURLOPT_SSL_VERIFYHOST, false);
+		
 		}
 
 		if (boolval($this->proxyRequest) == true) {
+
 			$proxyIp = (isset($this->attachedProxy->address)) ? $this->attachedProxy->address : ProxyManager::$defaultProxyIp;
+			
 			$proxyPort = (isset($this->attachedProxy->port)) ? $this->attachedProxy->port : ProxyManager::$defaultProxyPort;
 
 			curl_setopt($this->curlChannel, $this->getConfig('proxy'), $proxyIp);
+			
 			curl_setopt($this->curlChannel, $this->getConfig('proxy_port'), $proxyPort);
 
 			if (ctype_digit($this->tunnelProxy) && intval($this->tunnelProxy) == 1) {
+			
 				curl_setopt($this->curlChannel, $this->getConfig('proxy_http_tunnel'), 1);
+			
 			}
 		}
 
 		if (!empty(RequestManager::$authentication)) {
+
 			$authenticationType = $this->authenticationType;		
+			
 			$username = RequestManager::$authentication['username'];
+			
 			$password = RequestManager::$authentication['password'];
 			
 			$authenticationTypeConfig = $this->getAuthConfig(
@@ -711,40 +737,51 @@ class RequestManager
 			);
 
 			$authenticationTypeConfigOption = $authenticationTypeConfig->option;
+			
 			$authenticationTypeConfigValue = $authenticationTypeConfig->value;
 			
 			$authenticationInfoStapler = (boolval($this->proxyRequest) == true) ? $this->getConfig('proxy_auth') : $this->getConfig('auth');
+			
 			$authInfo = (boolval($this->proxyRequest) == true) ? $username.":".$password : $authenticationTypeConfigValue;
 
 			curl_setopt($this->curlChannel, $authenticationInfoStapler, $authInfo);
 
 			if (boolval($this->proxyRequest) == false) {
+			
 				curl_setopt($this->curlChannel, CURLOPT_HTTPAUTH, $authenticationTypeConfigOption);
+			
 			}
 		}
 
 		if (ctype_digit($this->timeout) && $this->timeout > 0) {
+			
 			curl_setopt($this->curlChannel, CURLOPT_TIMEOUT, $this->timeout);
+		
 		}
 
 		curl_setopt($this->curlChannel, CURLOPT_CONNECTTIMEOUT, 0);
 
 		if (sizeof($this->headers) > 0) {
+		
 			curl_setopt($this->curlChannel, CURLOPT_HTTPHEADER, $this->headers);
+		
 		}
 
 		curl_setopt($this->curlChannel, CURLOPT_HEADER, 1);
+		
 		curl_setopt($this->curlChannel, CURLOPT_VERBOSE, 1);
+		
 		curl_setopt($this->curlChannel, CURLOPT_HEADER, 1);
 		
-		$response = curl_exec($this->curlChannel);
+		$response = curl_exec($this->curlChannel);		
 		$this->response = curl_getinfo($this->curlChannel);
 
 		$headerSize = curl_getinfo($this->curlChannel, CURLINFO_HEADER_SIZE);
 		$header = substr($response, 0, $headerSize);
+		
 		$body = substr($response, $headerSize);
-
 		$this->error = curl_error($this->curlChannel);
+
 		$this->errorNo = curl_errno($this->curlChannel);
 
 		curl_close($this->curlChannel);
@@ -770,8 +807,11 @@ class RequestManager
 	private function doFileRequest()
 	{
 		$requestWrappers = ['http'];
+		
 		if (!in_array(RequestManager::$requestWrapper, $requestWrappers)) {
+
 			throw new Exception(sprintf("Http wrapper %s not accecpted.", RequestManager::$requestWrapper));
+		
 		}
 
 		$wrapper = RequestManager::$requestWrapper;
@@ -779,29 +819,39 @@ class RequestManager
 		$requestWrapperStreamContext['method'] = $this->method;
 
 		if ($this->method == 'POST') {
+
 			$requestWrapperStreamContext['content'] = http_build_query($this->requestParameters);
+		
 		}
 
 		if (!empty(RequestManager::$authentication)) {
+		
 			$username = RequestManager::$authentication['username'];
+		
 			$password = RequestManager::$authentication['password'];
 
 			$this->headers['Authorization'] = 'Basic '.base64_encode($username.':'.$password);
 		}
 
 		$headers = $this->resolveHeaders(true);
+		
 		if (gettype($headers)=='array' && !empty($headers)) {
+		
 			$headers = implode("\r\n", $headers[0]);
+		
 		}
 
 		$requestWrapperStreamContext['header'] = $headers;
 		$requestWrapperStreamContext['timeout'] = (Integer) $this->timeout;
 
 		if (boolval($this->proxyRequest) == true) {
+		
 			$proxyIp = (isset($this->attachedProxy->address)) ? $this->attachedProxy->address : ProxyManager::$defaultProxyIp;
+		
 			$proxyPort = (isset($this->attachedProxy->port)) ? $this->attachedProxy->port : ProxyManager::$defaultProxyPort;
 
 			$requestWrapperStreamContext['proxy'] = $this->createProxyUrl('tcp', $proxyIp, $proxyPort);
+		
 		}
 
 		$requestContext = [
@@ -809,10 +859,12 @@ class RequestManager
 		];	
 
 		if (true == RequestManager::$disableSSL) {
+
 			$requestContext['ssl'] = [
 				'verify_peer_name' => false,
 				'verify_peer' => false
 			];
+
 		}
 
 		$body = htmlentities(file_get_contents($this->url, false, stream_context_create($requestContext)));
@@ -849,10 +901,15 @@ class RequestManager
 	{
 		(Array) $headers = [];
 		$headerValue = array_values($this->headers);
+
 		foreach(array_keys($this->headers) as $i => $key) {
+		
 			if (true == gettype($fgc)) {
+		
 				$headers[] = "$key: $headerValue[$i]\r\n";
+		
 			}else{
+		
 				$headers[] = [$key.': '.$headerValue[$i]];
 			}
 		}
@@ -869,12 +926,14 @@ class RequestManager
 	*/
 	private function getCleanUrl($url='')
 	{
-		$preg=preg_match("/\?(.*?)/", $url, $match);
+		$preg = preg_match("/\?(.*?)/", $url, $match);
+
 		if ($preg) {
 			$queryPipePosition = strpos($url, '?');
 			$queryString = substr($url, 0, $queryPipePosition);
 			$url = $queryString;
 		}
+		
 		return $url;
 	}
 

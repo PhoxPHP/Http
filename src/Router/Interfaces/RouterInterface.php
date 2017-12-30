@@ -1,10 +1,11 @@
 <?php
-namespace Package\Http\Router\Interfaces;
+namespace Kit\Http\Router\Interfaces;
 
-use Package\Http\Router\Factory;
 use Closure;
+use Kit\Http\Router\Factory;
 
-interface RouterInterface {
+interface RouterInterface
+{
 
 	/**
 	* @param 	$route <String

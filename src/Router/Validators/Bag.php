@@ -1,23 +1,24 @@
 <?php
-namespace Package\Http\Router\Validators;
+namespace Kit\Http\Router\Validators;
 
-use Package\Http\Router\Factory;
-use RuntimeException;
 use CLosure;
+use RuntimeException;
+use Kit\Http\Router\Factory;
 
-class Bag {
+class Bag
+{
 
 	/**
 	* @var 		$requestCriteriaList
 	* @access 	private
 	*/
-	private 	$requestCriteriaList = array('get', 'post', 'delete', 'put', 'all');
+	private 	$requestCriteriaList = ['get', 'post', 'delete', 'put', 'all'];
 
 	/**
 	* @var 		$requestCriteria
 	* @access 	private
 	*/
-	private static $validatorsFallback = array();
+	private static $validatorsFallback = [];
 
 	/**
 	* @var 		$criteria
@@ -35,7 +36,8 @@ class Bag {
 	* @access 	public
 	* @return 	Array
 	*/
-	public function getCriteriaList() : Array {
+	public function getCriteriaList() : Array
+	{
 		return $this->requestCriteriaList;
 	}
 
@@ -43,10 +45,14 @@ class Bag {
 	* @param 	$criteria <String>
 	* @access 	public
 	*/
-	public function from($criteria='') : Bag {
+	public function from($criteria='') : Bag
+	{
 		if (!in_array($criteria, $this->requestCriteriaList)) {
+		
 			throw new RuntimeException(sprintf('%s is not a valid shared route method', $criteria));
+		
 		}
+
 		$this->criteria = $criteria;
 		return $this;
 	}
@@ -56,7 +62,8 @@ class Bag {
 	* @access 	public
 	* @return 	void
 	*/
-	public function getClosure($route='') {
+	public function getClosure($route='')
+	{
 		return Bag::$validatorsFallback[$this->criteria][$route] ?? null;
 	}
 
@@ -68,12 +75,18 @@ class Bag {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function pushRouteFallback(Factory $factory, Closure $fallbackClosure) : Factory {
+	public function pushRouteFallback(Factory $factory, Closure $fallbackClosure) : Factory
+	{
 		$sharedMethod = $factory->getSharedRouteMethod();
+
 		if (!in_array($sharedMethod, $this->requestCriteriaList)) {
+		
 			throw new RuntimeException(sprintf('%s is not a valid shared route method', $sharedMethod));
+		
 		}
+
 		Bag::$validatorsFallback[$sharedMethod][$factory->getTempRoute()][] = $fallbackClosure;
+		
 		return $factory;
 	}
 

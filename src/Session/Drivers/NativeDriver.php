@@ -6,27 +6,30 @@
 * This file is part of phoxphp framework.
 * ###############################################
 */
-namespace Package\Http\Session\Drivers;
+namespace Kit\Http\Session\Drivers;
 
-use Package\Http\Session\Drivers\Interfaces\DriverInterface;
-use Package\Http\Session\Factory;
 use StdClass;
+use Kit\Http\Session\Factory;
+use Kit\Http\Session\Drivers\Interfaces\DriverInterface;
 
-trait NativeDriverCommand {
+trait NativeDriverCommand
+{
 
 	/**
 	* @param 	$command <String>
 	* @access 	public
 	* @return 	void
 	*/
-	public static function runCommand($command) {
+	public static function runCommand($command)
+	{
 		$command = "?> $command <?php ";
 		return eval($command);
 	}
 
 }
  
-class NativeDriver implements DriverInterface {
+class NativeDriver implements DriverInterface
+{
 
 	use NativeDriverCommand;
 
@@ -77,6 +80,7 @@ class NativeDriver implements DriverInterface {
 		$this->factory = $factory;
 		$storage = $this->config()->storage;
 		session_save_path($storage);
+
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
@@ -86,7 +90,8 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function register() {
+	public function register()
+	{
 		return true;
 	}
 
@@ -97,14 +102,20 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	void
 	*/
-	public function create($key=null, $value=null, $duration=60) {
+	public function create($key=null, $value=null, $duration=60)
+	{
 		if ($this->exists($key)) {
+
 			return;
+		
 		}
 
 		$timeout = (is_integer($duration)) ? $duration : $this->getTimestamp($duration);
+
 		if (in_array(gettype($key), $this->nullKeyTypes)) {
+		
 			$key = 'app-session-store-key';
+		
 		}
 
 		$_SESSION[$key] = [
@@ -118,13 +129,18 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function exists($key=null) {
+	public function exists($key=null)
+	{
 		$reader = $this->read($key);
 		$cmd = '<?php return isset($_SESSION'.$reader.'); ?>';
 		$cmd = NativeDriverCommand::runCommand($cmd);
+	
 		if ($cmd) {
+		
 			return true;
+		
 		}
+
 		return false;
 	}
 
@@ -133,10 +149,13 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	void
 	*/
-	public function delete($key=null) {
+	public function delete($key=null)
+	{
 		if ($this->exists($key)) {
+	
 			$cmd = '<?php unset($_SESSION'.$this->read($key).'); ?>';
 			return NativeDriverCommand::runCommand($cmd);
+	
 		}
 	}
 
@@ -144,7 +163,8 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function get() : NativeDriver {
+	public function get() : NativeDriver
+	{
 		$this->store = $this->store();
 		return $this;
 	}
@@ -154,11 +174,16 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Array|Object
 	*/
-	public function all($toObject=false) {
+	public function all($toObject=false)
+	{
 		$response = $_SESSION;
+
 		if (boolval($toObject) == true) {
+		
 			$response = (Object) $response;
+		
 		}
+
 		return $response;
 	}
 
@@ -166,14 +191,22 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function first() {
+	public function first()
+	{
 		if (sizeof($_SESSION) < 1) {
+		
 			return;
+		
 		}
+
 		foreach(array_keys($_SESSION) as $i => $key) {
+		
 			if ($i == 0) {
+		
 				return $_SESSION[$key][$this->encrypt($key)];
+		
 			}
+		
 		}
 	}
 
@@ -181,15 +214,24 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function last() {
+	public function last()
+	{
 		if (sizeof($_SESSION) < 1) {
+	
 			return;
+	
 		}
+	
 		$lastOffset = sizeof($_SESSION) - 1;
+	
 		foreach(array_keys($_SESSION) as $i => $key) {
+	
 			if ($i == $lastOffset) {
+	
 				return $_SESSION[$key][$this->encrypt($key)];
+	
 			}
+		
 		}
 	}
 
@@ -198,13 +240,16 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function offset($key=null) {
+	public function offset($key=null)
+	{
+
 		if ($this->exists($key)) {
 			$reader = $this->read($key);
 			$cmd = '<?php return $_SESSION'.$reader.'; ?>';
 			$cmd = NativeDriverCommand::runCommand($cmd);
 			return $cmd;
 		}
+
 		return false;
 	}
 
@@ -212,11 +257,13 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function deleteAll() {
+	public function deleteAll()
+	{
 		if (sizeof($_SESSION) > 0) {
 			session_destroy();
 			session_unset();
 		}
+
 		return true;
 	}
 
@@ -228,16 +275,26 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function deleteAllExcept(array $whiteList=[]) {
+	public function deleteAllExcept(array $whiteList=[])
+	{
 		if (sizeof($_SESSION) > 0) {
+
 			$sessionKeys = array_keys($_SESSION);
+		
 			array_map(function($key) use ($whiteList) {
+
 				$encryptedKey = $this->encrypt($key);
+				
 				if (!in_array($key, $whiteList) && isset($_SESSION[$key])) {
+
 					unset($_SESSION[$key]);
+
 				}
+
 			}, array_keys($_SESSION));
+
 		}
+
 		return true;
 	}
 
@@ -245,8 +302,11 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Array|Object
 	*/
-	public function config() {
+	public function config()
+	{
+
 		return $this->factory->getConfiguration();
+
 	}
 
 	/**
@@ -254,10 +314,14 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function getCreatedDate($key=null) {
+	public function getCreatedDate($key=null)
+	{
 		if (sizeof(explode('|', $key)) > 1 || !$this->exists($key) || !$this->exists($key.'|t')) {
+		
 			return false;
+		
 		}
+
 		$key = $key.'|t';
 		$key = explode('|', $this->get()->offset($key));
 		return $key[0];
@@ -268,10 +332,14 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getTimeout($key=null) {
+	public function getTimeout($key=null)
+	{
 		if (sizeof(explode('|', $key)) > 1 || !$this->exists($key) || !$this->exists($key.'|t')) {
+
 			return false;
+
 		}
+
 		$key = $key.'|t';
 		$key = explode('|', $this->get()->offset($key));
 		return $key[1];
@@ -282,15 +350,22 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function isExpired($key=null) {
+	public function isExpired($key=null)
+	{
 		$response = false;
+		
 		if (!$this->exists($key)) {
+
 			return true;
+
 		}
 
 		$key = $this->getSessionTime($key);
+
 		if (time() > bcadd($key[0], $key[1])) {
+
 			$response = true;
+
 		}
 		
 		return $response;
@@ -302,10 +377,14 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	void
 	*/
-	public function incrementTimeout($key=null, $timeout=60) {
+	public function incrementTimeout($key=null, $timeout=60)
+	{
 		if (!$this->exists($key)) {
+
 			return;
+
 		}
+
 		$time = $this->getSessionTime($key);
 		$duration = (is_int($timeout)) ? $timeout : $this->getTimestamp($timeout);
 		$duration = bcadd($time[1], $duration);
@@ -319,14 +398,21 @@ class NativeDriver implements DriverInterface {
 	* @access 	public
 	* @return 	void
 	*/
-	public function decrementTimeout($key=null, $timeout=60) {
+	public function decrementTimeout($key=null, $timeout=60)
+	{
 		if (!$this->exists($key)) {
+		
 			return;
+		
 		}
+
 		$time = $this->getSessionTime($key);
 		$duration = (is_int($timeout)) ? $timeout : $this->getTimestamp($timeout);
+		
 		if ($duration > $time[1]) {
+
 			return;
+
 		}
 
 		$duration = bcsub($time[1], $duration);
@@ -340,10 +426,14 @@ class NativeDriver implements DriverInterface {
 	* @access 	protected
 	* @return 	Array
 	*/
-	protected function getSessionTime($key='') {
+	protected function getSessionTime($key='')
+	{
 		if (sizeof(explode('|', $key)) > 1 || !$this->exists($key) || !$this->exists($key.'|t')) {
+
 			return false;
+		
 		}
+
 		$key = $key.'|t';
 		return explode('|', $this->get()->offset($key));
 	}
@@ -354,7 +444,8 @@ class NativeDriver implements DriverInterface {
 	* @access 	protected
 	* @return 	Object
 	*/
-	protected function store() {
+	protected function store()
+	{
 		return (Object) $_SESSION;
 	}
 
@@ -365,16 +456,23 @@ class NativeDriver implements DriverInterface {
 	* @access 	protected
 	* @return 	String
 	*/
-	protected function read($string='') {
+	protected function read($string='')
+	{
 		$string = explode('|', $string);
 		$queue = [];
+	
 		if (sizeof($string) == 1) {
+		
 			$string[1] = $this->encrypt($string[0]);
+		
 		}
-		// Converts exploded strings to array formatted string.
+
 		foreach($string as $str) {
+		
 			$queue[] = '["'.$str.'"]';
+		
 		}
+
 		return implode('', $queue);
 	}
 
@@ -383,11 +481,16 @@ class NativeDriver implements DriverInterface {
 	* @access 	protected
 	* @return 	Integer
 	*/
-	protected function getTimestamp($timeout) {
+	protected function getTimestamp($timeout)
+	{
 		$factoryTimeout = $this->config()->timeout;
+		
 		if (!is_int($factoryTimeout) || intval($factoryTimeout) < 1) {
+
 			$factoryTimeout = $timeout;
+
 		}
+
 		return $factoryTimeout;
 	}
 
@@ -398,7 +501,8 @@ class NativeDriver implements DriverInterface {
 	* @access 	protected
 	* @return 	String
 	*/
-	protected function encrypt($key='') {
+	protected function encrypt($key='')
+	{
 		return md5(sha1($key));
 	}
 

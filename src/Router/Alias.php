@@ -1,16 +1,17 @@
 <?php
-namespace Package\Http\Router;
+namespace Kit\Http\Router;
 
-use Package\Http\Router\Factory;
 use RuntimeException;
+use Kit\Http\Router\Factory;
 
-class Alias {
+class Alias
+{
 
 	/**
 	* @var 		$aliases
 	* @access 	private
 	*/
-	private static $aliases=array();
+	private static $aliases=[];
 
 	/**
 	* @var 		$criteria
@@ -23,7 +24,8 @@ class Alias {
 	* @access 	public
 	* @return 	Object Http\Router\Alias
 	*/
-	public function setMethodCriteria($method='') : Alias {
+	public function setMethodCriteria($method='') : Alias
+	{
 		$this->criteria = $method;
 		return $this;
 	}
@@ -34,12 +36,18 @@ class Alias {
 	* @access 	public
 	* @return 	void
 	*/
-	public function createNewALiasFromFactory(Factory $factory, $alias='') {
+	public function createNewALiasFromFactory(Factory $factory, $alias='')
+	{
 		$route = $factory->getTempRoute();
+
 		if (strlen($this->criteria) > 0) {
+		
 			Alias::$aliases[$this->criteria][$alias] = $route;
+		
 			return true;
+		
 		}
+
 		Alias::$aliases[$alias] = $route;
 	}
 
@@ -49,14 +57,22 @@ class Alias {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public static function hasAlias($alias='', $method='') {
+	public static function hasAlias($alias='', $method='')
+	{
 		$keyword = Alias::$aliases[$alias];
+
 		if ($method !== '') {
+		
 			if (!isset(Alias::$aliases[$method])) {
+		
 				return false;
+		
 			}
+		
 			$keyword = Alias::$aliases[$method][$alias];
+		
 		}
+		
 		return (isset($keyword)) ? true : false;
 	}
 

@@ -6,21 +6,22 @@
 * This file is part of phoxphp framework.
 * ###############################################
 */
-namespace Package\Http\Session;
+namespace Kit\Http\Session;
 
-use Package\Http\Session\Drivers\Interfaces\DriverInterface;
-use Package\DependencyInjection\Injector\InjectorBridge;
-use RuntimeException;
-use ReflectionClass;
 use App\AppManager;
+use ReflectionClass;
+use RuntimeException;
+use Kit\DependencyInjection\Injector\InjectorBridge;
+use Kit\Http\Session\Drivers\Interfaces\DriverInterface;
 
-class Factory extends InjectorBridge {
+class Factory extends InjectorBridge
+{
 
 	/**
 	* @var 		$interface
 	* @access 	private
 	*/
-	private 	$interface = "Package\\Http\\Session\\Drivers\\Interfaces\\DriverInterface";
+	private 	$interface = "Kit\\Http\\Session\\Drivers\\Interfaces\\DriverInterface";
 
 	/**
 	* @var 		$driver
@@ -32,7 +33,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct() {
+	public function __construct()
+	{
 		$this->resolveDriver();
 	}
 
@@ -42,10 +44,14 @@ class Factory extends InjectorBridge {
 	* @access 	protected
 	* @return 	void
 	*/
-	protected function resolveDriver() {
+	protected function resolveDriver()
+	{
 		$driver = $this->getDriver();
+
 		if (gettype($driver->register()) !== 'boolean' || boolval($this->getDriver()) !== true) {
+		
 			return;
+		
 		}
 	}
 
@@ -57,7 +63,8 @@ class Factory extends InjectorBridge {
 	* @access 	private
 	* @return 	void
 	*/
-	public function create($key='', $value='', $timeout) {
+	public function create($key='', $value='', $timeout)
+	{
 		return $this->getDriver()->create($key, $value, $timeout);
 	}
 
@@ -68,7 +75,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function exists($key='') {
+	public function exists($key='')
+	{
 		return $this->getDriver()->exists($key);
 	}
 
@@ -79,7 +87,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function delete($key='') {
+	public function delete($key='')
+	{
 		return $this->getDriver()->delete($key);
 	}
 
@@ -90,7 +99,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function get($key='') {
+	public function get($key='')
+	{
 		return $this->getDriver()->get()->offset($key);
 	}
 
@@ -102,7 +112,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Array|Object
 	*/
-	public function getAll($toObject=false) {
+	public function getAll($toObject=false)
+	{
 		return $this->getDriver()->get()->all($toObject);
 	}
 
@@ -112,7 +123,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getFirst() {
+	public function getFirst()
+	{
 		return $this->getDriver()->get()->first();
 	}
 
@@ -122,7 +134,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getLast() {
+	public function getLast()
+	{
 		return $this->getDriver()->get()->last();
 	}
 
@@ -132,7 +145,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function deleteAll() {
+	public function deleteAll()
+	{
 		return $this->getDriver()->deleteAll();
 	}
 
@@ -144,7 +158,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function deleteAllExcept(array $array=[]) {
+	public function deleteAllExcept(array $array=[])
+	{
 		return $this->getDriver()->deleteAllExcept($array);
 	}
 
@@ -155,7 +170,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getCreatedDate($key='') {
+	public function getCreatedDate($key='')
+	{
 		return $this->getDriver()->getCreatedDate($key);
 	}
 
@@ -166,7 +182,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getTimeout($key='') {
+	public function getTimeout($key='')
+	{
 		return $this->getDriver()->getTimeout($key);
 	}
 
@@ -177,7 +194,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function isExpired($key='') {
+	public function isExpired($key='')
+	{
 		return $this->getDriver()->isExpired($key);
 	}
 
@@ -187,7 +205,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return  	void
 	*/
-	public function incrementTimeout($key='', $timeout=60) {
+	public function incrementTimeout($key='', $timeout=60)
+	{
 		return $this->getDriver()->incrementTimeout($key, $timeout);
 	}
 
@@ -197,7 +216,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function decrementTimeout($key='', $timeout=60) {
+	public function decrementTimeout($key='', $timeout=60)
+	{
 		return $this->getDriver()->decrementTimeout($key, $timeout);
 	}
 
@@ -207,7 +227,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getDriverName() {
+	public function getDriverName()
+	{
 		return $this->driver;
 	}
 
@@ -217,7 +238,8 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getClass() {
+	public function getClass()
+	{
 		$driver = $this->config()->driver;
 		return "Http\\Session\\Driver\\$driver"."Driver";
 	}
@@ -228,14 +250,19 @@ class Factory extends InjectorBridge {
 	* @access 	protected
 	* @return 	Object
 	*/
-	protected function getDriver() : DriverInterface {
+	protected function getDriver() : DriverInterface
+	{
 		$driver = ucfirst($this->getConfiguration()->driver);
-		$driver = "Package\\Http\\Session\\Drivers\\$driver"."Driver";
+		$driver = "Kit\\Http\\Session\\Drivers\\$driver"."Driver";
 		
 		if (class_exists($driver)) {
+
 			$driverObject = new ReflectionClass($driver);
+
 			if (!$driverObject->implementsInterface($this->interface)) {
+
 				throw new RuntimeException(sprintf("Invalid session driver object. Driver must implement %s.", $this->interface));
+			
 			}
 
 			return new $driver($this);
@@ -248,10 +275,14 @@ class Factory extends InjectorBridge {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function getConfiguration() {
+	public function getConfiguration()
+	{
 		$config = $this->load('config')->get('session');
+		
 		if (gettype($config) !== 'array') {
+
 			throw new RuntimeException(sprintf("Invalid session configuration provided. Array expected, %s given.", gettype($config)));
+		
 		}
 
 		return (Object) $config;

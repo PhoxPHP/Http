@@ -6,9 +6,10 @@
 * This file is part of phoxphp framework.
 * ###############################################
 */
-namespace Package\Http;
+namespace Kit\Http;
 
-class Cookie {
+class Cookie
+{
 
 	/**
 	* @var 		$name
@@ -63,7 +64,8 @@ class Cookie {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct($name='', $value='', $expire=60, $path='/', $domain='', $secure=false, $httpOnly = false) {
+	public function __construct($name='', $value='', $expire=60, $path='/', $domain='', $secure=false, $httpOnly = false)
+	{
 		$this->name = $name;
 		$this->value = $value;
 		$this->expire = $this->getTime($expire); // Cookie expiration time in seconds
@@ -79,7 +81,8 @@ class Cookie {
 	* @access 	public
 	* @return 	void
 	*/
-	public function create() {
+	public function create()
+	{
 		return setcookie(
 			$this->name,
 			$this->value,
@@ -98,11 +101,16 @@ class Cookie {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function exists($cookie='') {
+	public function exists($cookie='')
+	{
 		$response = false;
+
 		if (isset($_COOKIE[$cookie])) {
+		
 			$response = true;
+		
 		}
+
 		return $response;
 	}
 
@@ -113,11 +121,16 @@ class Cookie {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function get($cookie='') {
+	public function get($cookie='')
+	{
 		$response = false;
+
 		if ($this->exists($cookie)) {
+		
 			$response = $_COOKIE[$cookie];
+		
 		}
+
 		return $response;
 	}
 
@@ -128,7 +141,8 @@ class Cookie {
 	* @access 	public
 	* @return 	void
 	*/
-	public function delete($cookie='') {
+	public function delete($cookie='')
+	{
 		setcookie(
 			$cookie,
 			'',
@@ -147,7 +161,8 @@ class Cookie {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getValue() {
+	public function getValue()
+	{
 		return $this->value;
 	}
 
@@ -157,7 +172,8 @@ class Cookie {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getPath() {
+	public function getPath()
+	{
 		return $this->path;
 	}
 
@@ -167,7 +183,8 @@ class Cookie {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getDomain() {
+	public function getDomain()
+	{
 		return $this->domain;
 	}
 
@@ -176,10 +193,14 @@ class Cookie {
 	* @access 	private
 	* @return 	Integer
 	*/
-	private function getTime($time='') {
+	private function getTime($time='')
+	{
 		if (!ctype_digit($time)) {
+		
 			return 60;
+		
 		}
+
 		return $time;
 	}
 

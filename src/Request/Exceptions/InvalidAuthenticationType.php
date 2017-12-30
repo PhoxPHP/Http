@@ -1,5 +1,5 @@
 <?php
-namespace Package\Http\Request\Exceptions;
+namespace Kit\Http\Request\Exceptions;
 
 use Exception;
 

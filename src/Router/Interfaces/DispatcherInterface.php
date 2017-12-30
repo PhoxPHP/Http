@@ -1,9 +1,10 @@
 <?php
-namespace Package\Http\Router\Interfaces;
+namespace Kit\Http\Router\Interfaces;
 
 use StdClass;
 
-interface DispatcherInterface {
+interface DispatcherInterface
+{
 
 	/**
 	* @param 	$callback <Object>
