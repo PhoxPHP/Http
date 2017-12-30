@@ -12,7 +12,7 @@ return [
 	# Exception class to use if `throw_404_error` is set to true and
 	# route does not exist.
 	################################################################
-	'404_error_exception' => Http\Router\Exceptions\RouteNotFoundException::class,
+	'404_error_exception' => Kit\Http\Router\Exceptions\RouteNotFoundException::class,
 
 	#######################################
 	# Path to middleware configuration file
@@ -30,7 +30,7 @@ return [
 	###################################
 	'slug_validation_options' => array(
 		'fallback_method_default_arguments' => array(
-			Http\Router\Factory::class
+			Kit\Http\Router\Factory::class
 		)
 	)
 ];
