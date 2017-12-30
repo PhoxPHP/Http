@@ -14,7 +14,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"PhoxPHP\\Http\\": "src"
+			"Kit\\Http\\": "src"
 		}
 	}
 }

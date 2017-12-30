@@ -2,7 +2,7 @@
 ###############################################
 # This file is part of phoxphp framework.
 ################################################
-namespace Package\Http\Request;
+namespace Kit\Http\Request;
 
 class ProxyManager
 {
@@ -63,8 +63,11 @@ class ProxyManager
 	public static function getProxy($name='')
 	{
 		$response = null;
+
 		if (ProxyManager::exists($name)) {
+		
 			$response = ProxyManager::$proxies[$name];
+		
 		}
 
 		return $response;
@@ -78,8 +81,11 @@ class ProxyManager
 	public static function exists($name='')
 	{
 		$response = false;
+		
 		if (isset(ProxyManager::$proxies[$name])) {
+
 			$response = true;
+		
 		}
 
 		return $response;

@@ -1,7 +1,8 @@
 <?php
-namespace Package\Http\Router;
+namespace Kit\Http\Router;
 
-class Config {
+class Config
+{
 
 	/**
 	* @param 	$file <String>
@@ -9,14 +10,20 @@ class Config {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function get($file='', $key='') {
+	public function get($file='', $key='')
+	{
 		if ('' == $file) {
 			return;
 		}
+
 		$file = include 'src/Config/'.$file.'.php';
+	
 		if (gettype($file) !== 'array') {
+			
 			return;
+
 		}
+
 		return $file[$key] ?? $key;
 	}
 

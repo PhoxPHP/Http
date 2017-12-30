@@ -1,7 +1,8 @@
 <?php
-namespace Package\Http\Router\Validators\Interfaces;
+namespace Kit\Http\Router\Validators\Interfaces;
 
-interface ValidatorInterface {
+interface ValidatorInterface
+{
 
 	/**
 	* @access 	public

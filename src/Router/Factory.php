@@ -1,15 +1,16 @@
 <?php
-namespace Package\Http\Router;
+namespace Kit\Http\Router;
 
 use Closure;
 use App\Config;
 use RuntimeException;
-use Package\DependencyInjection\Injector\InjectorBridge;
-use Package\Http\Router\Interfaces\{RouterInterface, Dispatchable};
-use Package\Http\Router\{Alias, Builder, Bag, Dispatcher, QueryStringConnector};
-use Package\Http\Router\Validators\{RouteParameterValidator, RouteCallbackTypeValidator, Bag as ValidatorsRepo};
+use Kit\DependencyInjection\Injector\InjectorBridge;
+use Kit\Http\Router\Interfaces\{RouterInterface, Dispatchable};
+use Kit\Http\Router\{Alias, Builder, Bag, Dispatcher, QueryStringConnector};
+use Kit\Http\Router\Validators\{RouteParameterValidator, RouteCallbackTypeValidator, Bag as ValidatorsRepo};
 
-class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
+class Factory extends InjectorBridge implements RouterInterface, Dispatchable
+{
 
 	/**
 	* @var 		$requestUri
@@ -92,7 +93,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct() {
+	public function __construct()
+	{
 		$this->routerBag = new Bag($this);
 		$this->routeBuilder = new Builder($this);
 		$this->requestUri = $_SERVER['REQUEST_URI'];
@@ -108,13 +110,15 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function get($route=null, $callback=null, $validator=[]) : Factory {
+	public function get($route=null, $callback=null, $validator=[]) : Factory
+	{
 		if ($this->requestMethod == 'GET') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;
 			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::GET, $callback, $validator);
 		}
+
 		return $this;
 	}
 
@@ -127,13 +131,15 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function post($route=null, $callback=null, $validator=[]) : Factory {
+	public function post($route=null, $callback=null, $validator=[]) : Factory
+	{
 		if ($this->requestMethod == 'POST') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
 			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::POST, $callback, $validator);
 		}
+
 		$this->route = null;
 		return $this;
 	}
@@ -147,13 +153,15 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function put($route=null, $callback=null, $validator=[]) : Factory {
+	public function put($route=null, $callback=null, $validator=[]) : Factory
+	{
 		if ($this->requestMethod == 'PUT') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
 			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::PUT, $callback, $validator);
 		}
+
 		$this->route = null;
 		return $this;
 	}
@@ -167,13 +175,15 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function delete($route=null, $callback=null, $validator=[]) : Factory {
+	public function delete($route=null, $callback=null, $validator=[]) : Factory
+	{
 		if ($this->requestMethod == 'DELETE') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
 			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::DELETE, $callback, $validator);
 		}
+
 		$this->route = null;
 		return $this;
 	}
@@ -187,7 +197,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function default($route=null, $callback=null, $validator=[]) : Factory {
+	public function default($route=null, $callback=null, $validator=[]) : Factory
+	{
 		$this->route = $route;
 		$this->routeCallback = $callback;
 		$this->routeValidator = $validator;		
@@ -203,7 +214,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public static function hasRoute($route='') {
+	public static function hasRoute($route='')
+	{
 		return (isset(Bag::getRoutes()['all'][$route])) ? true : false;
 	}
 
@@ -221,7 +233,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getTempRoute() {
+	public function getTempRoute()
+	{
 		return $this->route;
 	}
 
@@ -229,7 +242,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getTempCallback() {
+	public function getTempCallback()
+	{
 		return $this->routeCallback;
 	}
 
@@ -237,7 +251,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Array
 	*/
-	public function getTempValidator() {
+	public function getTempValidator()
+	{
 		return $this->routeValidator;
 	}
 
@@ -249,12 +264,15 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	String|Array
 	*/
-	public function getRequestUri($toString=false) {
+	public function getRequestUri($toString=false)
+	{
 		$requestUri = explode("/", $this->requestUri);
 		$requestUri = array_values(array_diff($requestUri, explode("/", $_SERVER['SCRIPT_NAME'])));
 
 		if(true == $toString) {
+	
 			$requestUri = implode("/", $requestUri);
+	
 		}
 
 		return $requestUri;
@@ -266,7 +284,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @return 	Object
 	* @todo 	Add documentation
 	*/
-	public function secureRouteQueryString($option=false) : Factory {
+	public function secureRouteQueryString($option=false) : Factory
+	{
 		$option = (Integer) $option;
 		$queryStringConnector = new QueryStringConnector($this);
 		$queryStringConnector->setRuleFor($this->getTempRoute(), $option);
@@ -279,7 +298,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Array
 	*/
-	public function getConfiguredRoute() : Array {
+	public function getConfiguredRoute() : Array
+	{
 		return Bag::getAccessedRoute();
 	}
 
@@ -291,7 +311,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function config($file=null, $key=null) {
+	public function config($file=null, $key=null)
+	{
 		return $this->get($file, $key);
 	}
 
@@ -299,7 +320,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	String
 	*/
-	public function getSharedRouteMethod() {
+	public function getSharedRouteMethod()
+	{
 		return $this->routeMethod;
 	}
 
@@ -310,7 +332,8 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function setValidatorFallback(Closure $fallbackClosure) : Factory {
+	public function setValidatorFallback(Closure $fallbackClosure) : Factory
+	{
 		$validatorsRepo = new ValidatorsRepo();
 		$validatorsRepo->pushRouteFallback($this, $fallbackClosure);
 		return $this;
@@ -321,10 +344,14 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	Object Http\Router\Factory
 	*/
-	public function alias($name='') : Factory {
+	public function alias($name='') : Factory
+	{
 		if ($name == '') {
+
 			throw new RuntimeException('Route alias cannot be empty');
+		
 		}
+
 		$alias = new Alias();
 		$alias->setMethodCriteria($this->getSharedRouteMethod())->createNewAliasFromFactory($this, $name);
 		return $this;
@@ -335,13 +362,19 @@ class Factory extends InjectorBridge implements RouterInterface, Dispatchable {
 	* @access 	public
 	* @return 	void
 	*/
-	public function run() {
+	public function run()
+	{
 		$this->routeBuilder->buildRoute($this);
 		if (empty(Bag::getAccessedRoute()) && intval($this->routeBuilder->__build) !== 1) {
+
 			if ($this->load('config')->get('router', 'throw_404_error') == true) {
+			
 				$errorException = $this->load('config')->get('router', '404_error_exception');
+			
 				throw new $errorException(sprintf("Route %s not registered.", $this->getRequestUri(true)));
+			
 			}
+
 			return;
 		}
 

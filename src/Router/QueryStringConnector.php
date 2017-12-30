@@ -1,10 +1,11 @@
 <?php
-namespace Package\Http\Router;
+namespace Kit\Http\Router;
 
-use Package\Http\Router\{Factory, Bag};
+use Kit\Http\Router\{Factory, Bag};
 use RuntimeException;
 
-class QueryStringConnector {
+class QueryStringConnector
+{
 
 	/**
 	* @var 		$factory
@@ -25,7 +26,8 @@ class QueryStringConnector {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(Factory $factory) {
+	public function __construct(Factory $factory)
+	{
 		$this->factory = $factory;
 	}
 
@@ -38,9 +40,12 @@ class QueryStringConnector {
 	* @throws 	RuntimeException
 	* @return 	void
 	*/
-	public function setRuleFor($route, $rule=false) {
+	public function setRuleFor($route, $rule=false)
+	{
 		if (QueryStringConnector::isQueued($route)) {
+
 			throw new RuntimeException($this->factory->load('en_msg')->getMessage('query_string_rule_exists', ['route' => $route]));
+		
 		}
 
 		QueryStringConnector::$connectorList[$route] = (Integer) $rule;
@@ -53,7 +58,8 @@ class QueryStringConnector {
 	* @access 	public
 	* @return 	Array
 	*/
-	public static function getList() {
+	public static function getList()
+	{
 		return QueryStringConnector::$connectorList;
 	}
 
@@ -64,7 +70,8 @@ class QueryStringConnector {
 	* @access 	public
 	* @return 	Integer
 	*/
-	public static function getValidationFor($route) {
+	public static function getValidationFor($route)
+	{
 		return (Integer) QueryStringConnector::$connectorList[$route];
 	}
 
@@ -73,7 +80,8 @@ class QueryStringConnector {
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public static function isQueued($route='') {
+	public static function isQueued($route='')
+	{
 		return (isset(QueryStringConnector::$connectorList[$route])) ? true : false;
 	}
 

@@ -1,11 +1,12 @@
 <?php
-namespace Package\Http\Router;
+namespace Kit\Http\Router;
 
-use Package\Http\Router\Interfaces\RouterInterface;
-use Package\Http\Router\Builder;
 use StdClass;
+use Kit\Http\Router\Builder;
+use Kit\Http\Router\Interfaces\RouterInterface;
 
-class Bag {
+class Bag
+{
 
 	/**
 	* @var 		$router
@@ -17,7 +18,7 @@ class Bag {
 	* @var 		$registeredRoutes
 	* @access 	private
 	*/
-	private 	$registeredRoutes = array();
+	private 	$registeredRoutes = [];
 
 	/**
 	* @var 		$routes
@@ -29,14 +30,15 @@ class Bag {
 	* @var 		$matchedRoute
 	* @access 	private
 	*/
-	private static $matchedRoute = array();
+	private static $matchedRoute = [];
 
 	/**
 	* @param 	$router Http\Router\Interfaces\RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(RouterInterface $router) {
+	public function __construct(RouterInterface $router)
+	{
 		$this->router = $router;
 		Bag::$routes = array('get' => array(), 'post' => array(), 'put' => array(), 'delete' => array(), 'all' => array());
 	}
@@ -49,19 +51,25 @@ class Bag {
 	* @access 	public
 	* @return 	void
 	*/
-	public function pushRoute(RouterInterface $router, $method='', $callback='', array $validator=array()) {
+	public function pushRoute(RouterInterface $router, $method='', $callback='', array $validator=array())
+	{
 		$routeObject = new StdClass;
+
 		Bag::$routes[$method][] = $router->getTempRoute();
-		Bag::$routes['all'][$router->getTempRoute()] = array('callback' => $callback, 'validator' => $validator,
+
+		Bag::$routes['all'][$router->getTempRoute()] = [
+			'callback' => $callback,
+			'validator' => $validator,
 			'shared_method' => $router->getSharedRouteMethod()
-		);
+		];
 	}
 
 	/**
 	* @access 	public
 	* @return 	Array
 	*/
-	public static function getRoutes() : Array {
+	public static function getRoutes() : Array
+	{
 		return Bag::$routes;
 	}
 
@@ -75,7 +83,8 @@ class Bag {
 	* @access 	public
 	* @return 	void
 	*/
-	public function pushMatchedRoute(Builder $builder, array $parameters=[]) {
+	public function pushMatchedRoute(Builder $builder, array $parameters=[])
+	{
 		Bag::$matchedRoute = array('route' => $builder->getRoute(),
 			'callback' => $builder->getCallback(),
 			'uri' => $this->router->getRequestUri(true),
@@ -91,7 +100,8 @@ class Bag {
 	* @access 	public
 	* @return 	Array
 	*/
-	public static function getAccessedRoute() : Array {
+	public static function getAccessedRoute() : Array
+	{
 		return Bag::$matchedRoute;
 	}
 

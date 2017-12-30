@@ -1,10 +1,11 @@
 <?php
-namespace Package\Http\Router\Exceptions;
+namespace Kit\Http\Router\Exceptions;
 
-use App\BaseException;
 use Exception;
+use App\BaseException;
 
-class InvalidParameterMatchException extends BaseException {
+class InvalidParameterMatchException extends BaseException
+{
 
 	/**
 	* @var 		$template
@@ -23,7 +24,8 @@ class InvalidParameterMatchException extends BaseException {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct($message='') {
+	public function __construct($message='')
+	{
 		parent::__construct($message);
 	}
 

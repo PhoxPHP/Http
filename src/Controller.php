@@ -6,14 +6,15 @@
 * This file is part of phoxphp framework.
 * ###############################################
 */
-namespace Package\Http;
+namespace Kit\Http;
 
 use App\AppManager;
-use Package\Http\Request;
-use Package\View\Manager as ViewManager;
-use Package\DependencyInjection\Injector\InjectorBridge;
+use Kit\Http\Request;
+use Kit\View\Manager as ViewManager;
+use Kit\DependencyInjection\Injector\InjectorBridge;
 
-abstract class Controller extends InjectorBridge {
+abstract class Controller extends InjectorBridge
+{
 
 	/**
 	* @var 		$view
@@ -37,7 +38,8 @@ abstract class Controller extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct() {
+	public function __construct()
+	{
 		$this->app = AppManager::getInstance();
 		$this->request = $this->app->load('request');
 		$manager = new ViewManager();
@@ -49,7 +51,8 @@ abstract class Controller extends InjectorBridge {
 	* @access 	public
 	* @return 	Object
 	*/
-	public function __get($param) {
+	public function __get($param)
+	{
 		$response = null;
 
 		if (property_exists($this, $param)) {
@@ -57,10 +60,15 @@ abstract class Controller extends InjectorBridge {
 		}
 
 		$match = preg_match('/get.*[a-zA-Z0-9]/', $param, $result);
+
 		if ($match) {
+
 			$res = str_replace('get', '', $result[0]);
+			
 			if (class_exists($res.'Controller')) {
+			
 				$response = new $res.'Controller';
+			
 			}
 		}
 
@@ -73,7 +81,8 @@ abstract class Controller extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function setVariable($variable='', $value='') {
+	public function setVariable($variable='', $value='')
+	{
 		$this->view->setVariable($variable, $value);
 	}
 
@@ -82,7 +91,8 @@ abstract class Controller extends InjectorBridge {
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getVariable($variable='') {
+	public function getVariable($variable='')
+	{
 		return $this->view->getVariable($variable);
 	}
 
@@ -92,7 +102,8 @@ abstract class Controller extends InjectorBridge {
 	* @access 	public
 	* @return 	void
 	*/
-	public function render($template='', $layout='') {
+	public function render($template='', $layout='')
+	{
 		return $this->view->render($template, $layout);
 	}
 

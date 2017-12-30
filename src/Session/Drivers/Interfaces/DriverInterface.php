@@ -2,9 +2,10 @@
 ###############################################
 # This file is part of phoxphp framework.
 ################################################
-namespace Package\Http\Session\Drivers\Interfaces;
+namespace Kit\Http\Session\Drivers\Interfaces;
 
-interface DriverInterface {
+interface DriverInterface
+{
 
 	/**
 	* Sets the option whether to make the driver available or not.
