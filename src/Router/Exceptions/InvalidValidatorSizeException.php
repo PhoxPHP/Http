@@ -2,24 +2,89 @@
 namespace Kit\Http\Router\Exceptions;
 
 use App\BaseException;
+use App\BaseException;
+use App\Exceptions\Contract\ExceptionContract;
 
-class InvalidValidatorSizeException extends BaseException
+class InvalidValidatorSizeException extends BaseException implements ExceptionContract
 {
 
 	/**
-	* @var 		$template
+	* @var 		$code
 	* @access 	protected
 	*/
-	protected 	$template = '404x';
+	protected 	$code = 404;
 
 	/**
-	* @param 	$message <String>
+	* @var 		$message
+	* @access 	protected
+	*/
+	protected 	$message;
+
+	/**
+	* @var 		$view
+	* @access 	protected
+	*/
+	protected 	$view;
+
+	/**
+	* @param 	$options <Array>
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct($message='')
+	public function __construct(...$options)
 	{
-		parent::__construct($message);
+		$this->setCode(404);
+		$this->setView('exception');
+		$this->setMessage($options[0]);
+		parent::__construct();
 	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function setCode(int $code)
+	{
+		$this->code = $code;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function setMessage(String $message)
+	{
+		$this->message = $message;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function setView(String $view)
+	{
+		$this->view = $view;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function getExceptionCode() : int
+	{
+		return $this->code;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function getExceptionMessage() : String
+	{
+		return $this->message;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function getView() : String
+	{
+		return $this->view;
+	}}
 
 }
