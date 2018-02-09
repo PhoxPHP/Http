@@ -1,4 +1,28 @@
-<?php
+<?php/**
+* MIT License
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
+/**
+* @author 	Peter Taiwo
+*/
+
 namespace Kit\Http\Router;
 
 use Kit\Http\Router\{Factory, Bag};
@@ -20,7 +44,7 @@ class QueryStringConnector
 	private static $connectorList = [];
 
 	/**
-	* Constructor method accepting $factory {Http\Router\Factory} as an argument.
+	* Constructor method accepts $factory {Http\Router\Factory} as an argument.
 	*
 	* @param 	$factory Http\Router\Factory
 	* @access 	public
@@ -35,7 +59,7 @@ class QueryStringConnector
 	* Adds a route's query string validation rule to @param $connectorList.
 	*
 	* @param 	$route <String>
-	* @param 	$rule 	<Boolean>
+	* @param 	$rule <Boolean>
 	* @access 	public
 	* @throws 	RuntimeException
 	* @return 	void
@@ -44,7 +68,7 @@ class QueryStringConnector
 	{
 		if (QueryStringConnector::isQueued($route)) {
 
-			throw new RuntimeException($this->factory->load('en_msg')->getMessage('query_string_rule_exists', ['route' => $route]));
+			throw new RuntimeException(app()->load('en_msg')->getMessage('query_string_rule_exists', ['route' => $route]));
 		
 		}
 
