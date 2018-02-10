@@ -30,7 +30,7 @@
 
 namespace Kit\Http\Router\Validators;
 
-use Kit\Http\Router\Factory;
+use Kit\Http\Router\Repository;
 use Kit\Http\Router\Validators\Bag as ValidatorsRepo;
 use Kit\Http\Router\Exceptions\InvalidValidatorSizeException;
 use Kit\Http\Router\Validators\Interfaces\ValidatorInterface;
@@ -45,19 +45,19 @@ class RouteParameterValidator implements ValidatorInterface
 	private 	$validatorEventTrigger=false;
 
 	/**
-	* @var 		$factory
+	* @var 		$repository
 	* @access 	private
 	*/
-	private 	$factory;
+	private 	$repository;
 
 	/**
-	* @param 	$factory Http\Router\Factory
+	* @param 	$repository Http\Router\Repository
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(Factory $factory)
+	public function __construct(Repository $repository)
 	{
-		$this->factory = $factory;
+		$this->repository = $repository;
 	}
 
 	/**
@@ -80,7 +80,7 @@ class RouteParameterValidator implements ValidatorInterface
 	public function dispatchValidator()
 	{
 		$validatorsRepo = new ValidatorsRepo();
-		$canValidate = $this->factory->config('Router', 'allow_slug_validation');
+		$canValidate = $this->repository->config('Router', 'allow_slug_validation');
 
 		if (!$canValidate) {
 		
@@ -88,7 +88,7 @@ class RouteParameterValidator implements ValidatorInterface
 		
 		}
 
-		$configuredRoute = (Object) $this->factory->getConfiguredRoute();
+		$configuredRoute = (Object) $this->repository->getConfiguredRoute();
 		$route = $configuredRoute->route;
 
 		$callback = $configuredRoute->callback;
@@ -116,7 +116,7 @@ class RouteParameterValidator implements ValidatorInterface
 				
 				}
 
-				$validatorFallbackObjectArguments = $this->factory->config('Router', 'slug_validation_options');
+				$validatorFallbackObjectArguments = $this->repository->config('Router', 'slug_validation_options');
 
 				if (!preg_match($validator, $slugs[$key])) {
 					

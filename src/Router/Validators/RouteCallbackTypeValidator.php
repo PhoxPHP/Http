@@ -28,16 +28,16 @@ namespace Kit\Http\Router\Validators;
 
 use StdClass;
 use RuntimeException;
-use Kit\Http\Router\Factory;
+use Kit\Http\Router\Repository;
 
 class RouteCallbackTypeValidator
 {
 
 	/**
-	* @var 		$factory
+	* @var 		$repository
 	* @access 	private
 	*/
-	private 	$factory;
+	private 	$repository;
 
 	/**
 	* @var 		$typeObject
@@ -55,9 +55,9 @@ class RouteCallbackTypeValidator
 	*/
 	const 		STRING_CALL_TYPE_B = 'Secondary String Call Type';
 
-	public function __construct(Factory $factory)
+	public function __construct(Repository $repository)
 	{
-		$this->factory = $factory;
+		$this->repository = $repository;
 		$this->typeObject = new StdClass;
 	}
 
@@ -67,7 +67,7 @@ class RouteCallbackTypeValidator
 	*/
 	public function validate()
 	{
-		$route = $this->factory->getConfiguredRoute();
+		$route = $this->repository->getConfiguredRoute();
 		$callback = $route['callback'];
 
 		if (gettype($callback) == 'object') {

@@ -26,17 +26,17 @@
 
 namespace Kit\Http\Router;
 
-use Kit\Http\Router\{Factory, Bag};
+use Kit\Http\Router\{Repository, Bag};
 use RuntimeException;
 
 class QueryStringConnector
 {
 
 	/**
-	* @var 		$factory
+	* @var 		$repository
 	* @access 	private
 	*/
-	private 	$factory;
+	private 	$repository;
 
 	/**
 	* @var 		$connectorList
@@ -45,15 +45,15 @@ class QueryStringConnector
 	private static $connectorList = [];
 
 	/**
-	* Constructor method accepts $factory {Http\Router\Factory} as an argument.
+	* Constructor method accepts $repository {Http\Router\Repository} as an argument.
 	*
-	* @param 	$factory Http\Router\Factory
+	* @param 	$repository Http\Router\Repository
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(Factory $factory)
+	public function __construct(Repository $repository)
 	{
-		$this->factory = $factory;
+		$this->Repository = $repository;
 	}
 
 	/**
