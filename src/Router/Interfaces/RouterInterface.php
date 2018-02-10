@@ -159,15 +159,6 @@ interface RouterInterface
 	public function getSharedRouteMethod();
 
 	/**
-	* Returns a route given the route name.
-	*
-	* @param 	$name <String>
-	* @access 	public
-	* @return 	Mixed
-	*/
-	public function route(String $name);
-
-	/**
 	* Run the router.
 	*
 	* @access 	public

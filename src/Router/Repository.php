@@ -356,7 +356,11 @@ class Repository implements RouterInterface, Dispatchable
 	}
 
 	/**
-	* {@inheritDoc}
+	* Returns a route given the route name.
+	*
+	* @param 	$name <String>
+	* @access 	public
+	* @return 	Mixed
 	*/
 	public static function route(String $name='')
 	{
