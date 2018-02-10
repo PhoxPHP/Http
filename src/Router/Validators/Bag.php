@@ -28,7 +28,7 @@ namespace Kit\Http\Router\Validators;
 
 use CLosure;
 use RuntimeException;
-use Kit\Http\Router\Factory;
+use Kit\Http\Router\Repository;
 
 class Bag
 {
@@ -96,13 +96,13 @@ class Bag
 	* Adds a route's validator fallback to list of fallbacks.
 	*
 	* @param 	$fallbackClosure Closure
-	* @param 	$factory Http\Router\Factory
+	* @param 	$repository Http\Router\Repository
 	* @access 	public
 	* @return 	Object
 	*/
-	public function pushRouteFallback(Factory $factory, Closure $fallbackClosure) : Factory
+	public function pushRouteFallback(Repository $repository, Closure $fallbackClosure) : Repository
 	{
-		$sharedMethod = $factory->getSharedRouteMethod();
+		$sharedMethod = $repository->getSharedRouteMethod();
 
 		if (!in_array($sharedMethod, $this->requestCriteriaList)) {
 		
@@ -110,9 +110,9 @@ class Bag
 		
 		}
 
-		Bag::$validatorsFallback[$sharedMethod][$factory->getTempRoute()][] = $fallbackClosure;
+		Bag::$validatorsFallback[$sharedMethod][$repository->getTempRoute()][] = $fallbackClosure;
 		
-		return $factory;
+		return $repository;
 	}
 
 }

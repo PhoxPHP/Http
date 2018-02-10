@@ -27,7 +27,7 @@
 namespace Kit\Http\Router;
 
 use RuntimeException;
-use Kit\Http\Router\Factory;
+use Kit\Http\Router\Repository;
 
 class Alias
 {
@@ -58,14 +58,14 @@ class Alias
 	/**
 	* Creates an alias for a route. This can also be called naming a route.
 	*
-	* @param 	$factory Http\Router\Factory
+	* @param 	$repository Http\Router\Repository
 	* @param 	$alias 	<String>
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function createNewALiasFromFactory(Factory $factory, $alias='')
+	public function createNewALiasFromRepository(Repository $repository, $alias='')
 	{
-		$route = $factory->getTempRoute();
+		$route = $repository->getTempRoute();
 
 		if (strlen($alias) > 0 && !Alias::hasAlias($alias)) {
 		

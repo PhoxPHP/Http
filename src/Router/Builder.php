@@ -28,16 +28,16 @@ namespace Kit\Http\Router;
 
 use StdClass;
 use RuntimeException;
-use Kit\Http\Router\{Factory, Bag, QueryStringConnector};
+use Kit\Http\Router\{Repository, Bag, QueryStringConnector};
 
 class Builder
 {
 
 	/**
-	* @var 		$factory
+	* @var 		$repository
 	* @access 	private
 	*/
-	private 	$factory;
+	private 	$repository;
 
 	/**
 	* @var 		$routerBag
@@ -109,21 +109,21 @@ class Builder
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(Factory $factory)
+	public function __construct(Repository $repository)
 	{
-		$this->factory = $factory;
-		$this->routerBag = new Bag($factory);
+		$this->repository = $repository;
+		$this->routerBag = new Bag($repository);
 	}
 
 	/**
 	* Builds registered routes.
 	*
 	* @see 		Http\Router\Bag
-	* @param 	$factory Http\Router\Factory
+	* @param 	$repository Http\Router\Repository
 	* @access 	public
 	* @return 	Object Http\Router\Bag
 	*/
-	public function buildRoute(Factory $factory)
+	public function buildRoute(Repository $repository)
 	{
 		$routes = (Object) Bag::getRoutes();
 		$routes = $routes->all;
@@ -134,8 +134,8 @@ class Builder
 				$routeArray = array();
 				$routeCallback = $routes[$route]['callback'];
 				$routeParameterValidator = $routes[$route]['validator'];
-				$requestUriArray = $factory->getRequestUri();
-				$requestUri = $factory->getRequestUri(true);
+				$requestUriArray = $repository->getRequestUri();
+				$requestUri = $repository->getRequestUri(true);
 
 				$this->routeLabel = $route;
 

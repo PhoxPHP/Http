@@ -23,7 +23,7 @@
 namespace Kit\Http\Router\Interfaces;
 
 use Closure;
-use Kit\Http\Router\Factory;
+use Kit\Http\Router\Repository;
 
 interface RouterInterface
 {
@@ -37,7 +37,7 @@ interface RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function get($route=null, $callback=null, $prefix=array()) : Factory;
+	public function get($route=null, $callback=null, $prefix=array()) : Repository;
 
 	/**
 	* Registers a route with POST http method.
@@ -48,7 +48,7 @@ interface RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function post($route=null, $callback=null, $prefix=array()) : Factory;
+	public function post($route=null, $callback=null, $prefix=array()) : Repository;
 
 	/**
 	* Registers a route with PUT http method.
@@ -59,7 +59,7 @@ interface RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function put($route=null, $callback=null, $prefix=array()) : Factory;
+	public function put($route=null, $callback=null, $prefix=array()) : Repository;
 
 	/**
 	* Registers a route with DELETE http method.
@@ -70,7 +70,7 @@ interface RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function delete($route=null, $callback=null, $prefix=array()) : Factory;
+	public function delete($route=null, $callback=null, $prefix=array()) : Repository;
 
 	/**
 	* Registers a route with any http method.
@@ -81,7 +81,7 @@ interface RouterInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function default($route=null, $callback=null, $prefix=array()) : Factory;
+	public function default($route=null, $callback=null, $prefix=array()) : Repository;
 
 	/**
 	* Checks if a route is registered.
@@ -139,16 +139,16 @@ interface RouterInterface
 	* @access 	public
 	* @return 	Object
 	*/
-	public function setValidatorFallback(Closure $fallbackClosure) : Factory;
+	public function setValidatorFallback(Closure $fallbackClosure) : Repository;
 
 	/**
 	* Gives the created route a name.
 	*
 	* @param 	$name <String>
 	* @access 	public
-	* @return 	Object Http\Router\Factory
+	* @return 	Object Http\Router\Repository
 	*/
-	public function alias(String $name='') : Factory;
+	public function alias(String $name='') : Repository;
 
 	/**
 	* Returns route method that is currently accessed.

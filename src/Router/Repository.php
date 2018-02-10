@@ -34,7 +34,7 @@ use Kit\Http\Router\Interfaces\{RouterInterface, Dispatchable};
 use Kit\Http\Router\{Alias, Builder, Bag, Dispatcher, QueryStringConnector};
 use Kit\Http\Router\Validators\{RouteParameterValidator, RouteCallbackTypeValidator, Bag as ValidatorsRepo};
 
-class Factory implements RouterInterface, Dispatchable
+class Repository implements RouterInterface, Dispatchable
 {
 
 	/**
@@ -129,13 +129,13 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDOc}
 	*/
-	public function get($route=null, $callback=null, $validator=[]) : Factory
+	public function get($route=null, $callback=null, $validator=[]) : Repository
 	{
 		if ($this->requestMethod == 'GET') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;
-			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::GET, $callback, $validator);
+			$this->routerBag->pushRoute($this, $this->routeMethod = Repository::GET, $callback, $validator);
 		}
 
 		return $this;
@@ -144,13 +144,13 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDOc}
 	*/
-	public function post($route=null, $callback=null, $validator=[]) : Factory
+	public function post($route=null, $callback=null, $validator=[]) : Repository
 	{
 		if ($this->requestMethod == 'POST') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
-			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::POST, $callback, $validator);
+			$this->routerBag->pushRoute($this, $this->routeMethod = Repository::POST, $callback, $validator);
 		}
 
 		$this->route = null;
@@ -160,13 +160,13 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDOc}
 	*/
-	public function put($route=null, $callback=null, $validator=[]) : Factory
+	public function put($route=null, $callback=null, $validator=[]) : Repository
 	{
 		if ($this->requestMethod == 'PUT') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
-			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::PUT, $callback, $validator);
+			$this->routerBag->pushRoute($this, $this->routeMethod = Repository::PUT, $callback, $validator);
 		}
 
 		$this->route = null;
@@ -176,13 +176,13 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDOc}
 	*/
-	public function delete($route=null, $callback=null, $validator=[]) : Factory
+	public function delete($route=null, $callback=null, $validator=[]) : Repository
 	{
 		if ($this->requestMethod == 'DELETE') {
 			$this->route = $route;
 			$this->routeCallback = $callback;
 			$this->routeValidator = $validator;			
-			$this->routerBag->pushRoute($this, $this->routeMethod = Factory::DELETE, $callback, $validator);
+			$this->routerBag->pushRoute($this, $this->routeMethod = Repository::DELETE, $callback, $validator);
 		}
 
 		$this->route = null;
@@ -192,12 +192,12 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDOc}
 	*/
-	public function default($route=null, $callback=null, $validator=[]) : Factory
+	public function default($route=null, $callback=null, $validator=[]) : Repository
 	{
 		$this->route = $route;
 		$this->routeCallback = $callback;
 		$this->routeValidator = $validator;		
-		$this->routerBag->pushRoute($this, $this->routeMethod = Factory::ALL, $callback, $validator);
+		$this->routerBag->pushRoute($this, $this->routeMethod = Repository::ALL, $callback, $validator);
 		$this->route = null;
 		return $this;
 	}
@@ -287,7 +287,7 @@ class Factory implements RouterInterface, Dispatchable
 	* @access 	public
 	* @return 	Object
 	*/
-	public function secureRouteQueryString(Bool $option=false) : Factory
+	public function secureRouteQueryString(Bool $option=false) : Repository
 	{
 		$option = (Integer) $option;
 		$queryStringConnector = new QueryStringConnector($this);
@@ -330,7 +330,7 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDoc}
 	*/
-	public function setValidatorFallback(Closure $fallbackClosure) : Factory
+	public function setValidatorFallback(Closure $fallbackClosure) : Repository
 	{
 		$validatorsRepo = new ValidatorsRepo();
 		$validatorsRepo->pushRouteFallback($this, $fallbackClosure);
@@ -340,7 +340,7 @@ class Factory implements RouterInterface, Dispatchable
 	/**
 	* {@inheritDoc}
 	*/
-	public function alias(String $name='') : Factory
+	public function alias(String $name='') : Repository
 	{
 		if ($name == '') {
 			throw new RuntimeException('Route alias cannot be empty');

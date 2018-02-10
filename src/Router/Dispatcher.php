@@ -31,7 +31,7 @@ use App\Finder;
 use App\AppManager;
 use RuntimeException;
 use Kit\Prop\ClassLoader;
-use	Kit\Http\Router\Factory;
+use	Kit\Http\Router\Repository;
 use	Kit\Http\Router\Interfaces\Dispatchable;
 use	Kit\Http\Router\Interfaces\DispatcherInterface;
 use Kit\Http\Router\Validators\RouteCallbackTypeValidator;
@@ -67,7 +67,7 @@ class Dispatcher implements DispatcherInterface
 	* Construct method accepts the requires the dispatchable interface where
 	* it generates the route callbacks from.  
 	*
-	* @param 	$dispatchable Kit\Http\Router\Factory
+	* @param 	$dispatchable Kit\Http\Router\Repository
 	* @access 	public
 	* @return 	void
 	*/
