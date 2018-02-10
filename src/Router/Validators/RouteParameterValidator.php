@@ -1,5 +1,8 @@
 <?php
 /**
+* @author 	Peter Taiwo
+* @version 	1.0.0
+*
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -19,14 +22,6 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-
-/**
-* @author 	Peter Taiwo
-*/
-
-##################################################
-# This class is used to validate route parameters.
-##################################################
 
 namespace Kit\Http\Router\Validators;
 
