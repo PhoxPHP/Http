@@ -329,10 +329,6 @@ class Factory implements RouterInterface, Dispatchable
 
 	/**
 	* {@inheritDoc}
-	*
-	* @param 	Closure $fallbackClosure
-	* @access 	public
-	* @return 	Object
 	*/
 	public function setValidatorFallback(Closure $fallbackClosure) : Factory
 	{
@@ -342,21 +338,33 @@ class Factory implements RouterInterface, Dispatchable
 	}
 
 	/**
-	* @param 	$name <String>
-	* @access 	public
-	* @return 	Object Http\Router\Factory
+	* {@inheritDoc}
 	*/
-	public function alias($name='') : Factory
+	public function alias(String $name='') : Factory
 	{
 		if ($name == '') {
-
 			throw new RuntimeException('Route alias cannot be empty');
-		
+		}
+
+		if (Alias::hasAlias($name)) {
+			throw new RuntimeException(sprintf('A route has already been named %s', $name));
 		}
 
 		$alias = new Alias();
 		$alias->setMethodCriteria($this->getSharedRouteMethod())->createNewAliasFromFactory($this, $name);
 		return $this;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public static function route(String $name='')
+	{
+		if (Alias::hasAlias($name)) {
+			return Alias::getAlias($name);
+		}
+
+		return false;
 	}
 
 	/**

@@ -61,51 +61,48 @@ class Alias
 	* @param 	$factory Http\Router\Factory
 	* @param 	$alias 	<String>
 	* @access 	public
-	* @return 	void
+	* @return 	Boolean
 	*/
 	public function createNewALiasFromFactory(Factory $factory, $alias='')
 	{
 		$route = $factory->getTempRoute();
 
-		if (strlen($this->method) > 0) {
+		if (strlen($alias) > 0 && !Alias::hasAlias($alias)) {
 		
-			Alias::$aliases[$this->method][$alias] = $route;
+			Alias::$aliases[$alias] = $route;
 		
 			return true;
 		
 		}
 
-		Alias::$aliases[$alias] = $route;
+		return false;
 	}
 
 	/**
-	* Checks if a route with the name exists. Sometimes a route can might be accessed with multiple
-	* http requests methods. To check if the route is accessed with a certain method, the second
-	* parameter can be used to specify the method.
+	* Checks if a route with the name exists.
 	*
 	* @param 	$alias <String>
-	* @param 	$method <String>
 	* @access 	public
 	* @return 	Boolean
 	* @static
 	*/
-	public static function hasAlias(String $alias='', $method='')
+	public static function hasAlias(String $alias='')
 	{
 		$keyword = Alias::$aliases[$alias];
-
-		if ($method !== '') {
-		
-			if (!isset(Alias::$aliases[$method])) {
-		
-				return false;
-		
-			}
-		
-			$keyword = Alias::$aliases[$method][$alias];
-		
-		}
-		
 		return (isset($keyword)) ? true : false;
+	}
+
+	/**
+	* Returns a route name.
+	*
+	* @param 	$alias <String>
+	* @access 	public
+	* @return 	Mixed
+	* @static
+	*/
+	public static function getAlias(String $alias='')
+	{
+		return Alias::$aliases[$alias] ?? null;
 	}
 
 }
