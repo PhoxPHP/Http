@@ -88,8 +88,7 @@ class Alias
 	*/
 	public static function hasAlias(String $alias='')
 	{
-		$keyword = Alias::$aliases[$alias];
-		return (isset($keyword)) ? true : false;
+		return (isset(Alias::$aliases[$alias])) ? true : false;
 	}
 
 	/**

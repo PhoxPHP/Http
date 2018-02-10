@@ -351,7 +351,7 @@ class Repository implements RouterInterface, Dispatchable
 		}
 
 		$alias = new Alias();
-		$alias->setMethodCriteria($this->getSharedRouteMethod())->createNewAliasFromFactory($this, $name);
+		$alias->setMethodCriteria($this->getSharedRouteMethod())->createNewAliasFromRepository($this, $name);
 		return $this;
 	}
 
