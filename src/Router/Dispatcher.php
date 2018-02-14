@@ -109,13 +109,11 @@ class Dispatcher implements DispatcherInterface
 	private function applyStringCallback(array $array=[])
 	{
 		// Dispatch......
-		$controllerName = $array[1];
-		$controllerModel = $controllerName.'Model';
-		$controller = $this->getControllerName($controllerName);
+		$controller = $array[1];
 
 		if (!class_exists($controller)) {
 
-			throw new RuntimeException(sprintf("Unable to load {%s} controller.", $controllerName));
+			throw new RuntimeException(sprintf("Unable to load {%s} controller.", $controller));
 		
 		}
 
@@ -133,13 +131,16 @@ class Dispatcher implements DispatcherInterface
 		}
 
 		$route = $this->dispatchable->getConfiguredRoute();
-
 		$this->controller->routeParams = $route['parameters'];
+		$model = null;
 
-		if (class_exists($controllerModel)) {
-		
-			$this->controller->model = new $controllerModel();
-		
+		if (gettype($this->controller->registerModel()) == 'string') {
+			$model = $this->controller->registerModel();
+			if (!class_exists($model)) {
+				throw new RuntimeException(app()->load('en_msg')->getMessage('no_model_found', ['model' => $model]));				
+			}
+
+			$this->controller->model = new $model();
 		}
 
 		$finder = new Finder;
