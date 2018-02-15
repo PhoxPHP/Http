@@ -27,10 +27,10 @@ namespace Kit\Http;
 
 use App\AppManager;
 use Kit\Http\Request;
+use RuntimeException;
 use Kit\View\Manager as ViewManager;
-use Kit\DependencyInjection\Injector\InjectorBridge;
 
-abstract class Controller extends InjectorBridge
+abstract class Controller
 {
 
 	/**
@@ -47,9 +47,9 @@ abstract class Controller extends InjectorBridge
 
 	/**
 	* @var 		$request
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$request;
+	public 		$request;
 
 	/**
 	* @access 	public
@@ -57,8 +57,7 @@ abstract class Controller extends InjectorBridge
 	*/
 	public function __construct()
 	{
-		$this->app = AppManager::getInstance();
-		$this->request = $this->app->load('request');
+		$this->request = app()->load('request');
 		$manager = new ViewManager();
 		$this->view = $manager->getEngine();
 	}
@@ -76,16 +75,14 @@ abstract class Controller extends InjectorBridge
 			return;
 		}
 
-		$match = preg_match('/get.*[a-zA-Z0-9]/', $param, $result);
+		$match = preg_match('/[a-zA-Z0-9]/', $param, $result);
 
 		if ($match) {
-
-			$res = str_replace('get', '', $result[0]);
-			
-			if (class_exists($res.'Controller')) {
-			
-				$response = new $res.'Controller';
-			
+			// Resolve model
+			if ($result[0] == 'model') {
+				if (!$this->model || $this->model && gettype($this->model) !== 'object') {
+					throw new RuntimeException('Cannot call model on null property.');
+				}
 			}
 		}
 
@@ -93,35 +90,51 @@ abstract class Controller extends InjectorBridge
 	}
 
 	/**
+	* Sets a view variable.
+	*
 	* @param 	$variable <String>
 	* @param 	$value <Mixed>
 	* @access 	public
 	* @return 	void
 	*/
-	public function setVariable($variable='', $value='')
+	public function setVariable(String $variable='', $value='')
 	{
 		$this->view->setVariable($variable, $value);
 	}
 
 	/**
+	* Returns a view variable.
+	*
 	* @param 	$variable <String>
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function getVariable($variable='')
+	public function getVariable(String $variable='')
 	{
 		return $this->view->getVariable($variable);
 	}
 
 	/**
+	* Renders a given view.
+	*
 	* @param 	$template <String>
 	* @param 	$layout <String>
 	* @access 	public
 	* @return 	void
 	*/
-	public function render($template='', $layout='')
+	public function render(String $template='', String $layout='')
 	{
 		return $this->view->render($template, $layout);
 	}
+
+	/**
+	* Registers a controller model if there is any model tied to the controller.
+	* For example: PagesController and PageModel
+	* The string name of the class must be returned if not null.
+	*
+	* @access 	public
+	* @return 	Mixed
+	*/
+	abstract public function registerModel();
 
 }
