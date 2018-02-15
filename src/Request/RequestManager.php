@@ -372,6 +372,22 @@ class RequestManager
 	}
 
 	/**
+	* Returns a request input from global $_REQUEST variable.
+	*
+	* @param 	$key <String>
+	* @access 	public
+	* @return 	Mixed
+	*/
+	public function getInput(String $key=null)
+	{
+		if (!isset($_REQUEST[$key])) {
+			return null;
+		}
+
+		return $_REQUEST[$key];
+	}
+
+	/**
 	* Returns an object of $_SERVER global variable.
 	*
 	* @access 	public
