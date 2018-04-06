@@ -148,7 +148,7 @@ class Dispatcher implements DispatcherInterface
 
 		if (!method_exists($this->controller, $action)) {
 
-			throw new RuntimeException(sprintf("Method {%s} not found in {%s} controller", $action, $controllerName));
+			throw new RuntimeException(sprintf("Method {%s} not found in {%s} controller", $action, $controller));
 		
 		}
 
