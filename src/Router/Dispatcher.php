@@ -153,7 +153,10 @@ class Dispatcher implements DispatcherInterface
 		}
 
 		ob_start();
-		$this->controller->$action();
+		call_user_func_array([
+			$this->controller,
+			$action
+		], $route['parameters']);
 		$data = ob_get_contents();
 		ob_end_clean();
 
