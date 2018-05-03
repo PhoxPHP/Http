@@ -52,12 +52,19 @@ abstract class Controller
 	public 		$request;
 
 	/**
+	* @var 		$response
+	* @access 	public
+	*/
+	public 		$response;
+
+	/**
 	* @access 	public
 	* @return 	void
 	*/
 	public function __construct()
 	{
 		$this->request = app()->load('request');
+		$this->response = app()->load('response');
 		$manager = new ViewManager();
 		$this->view = $manager->getEngine();
 	}
