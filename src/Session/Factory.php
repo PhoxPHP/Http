@@ -77,10 +77,11 @@ class Factory extends InjectorBridge
 	*
 	* @param 	$key <String> Session key to be added.
 	* @param 	$value <String> Session value of key to be added.
+	* @param 	$timeout <Integer> Session alive time in seconds.
 	* @access 	private
 	* @return 	void
 	*/
-	public function create($key='', $value='', $timeout)
+	public function create($key='', $value='', Int $timeout=60)
 	{
 		return $this->getDriver()->create($key, $value, $timeout);
 	}
