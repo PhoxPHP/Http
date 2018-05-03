@@ -632,6 +632,23 @@ class RequestManager
 	}
 
 	/**
+	* Checks if a request is sent via an ajax request.
+	*
+	* @access 	public
+	* @return 	Boolean
+	*/
+	public function isAjax() : Bool
+	{
+		if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+		!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+		strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	* @param 	$key <String>
 	* @access 	private
 	* @return 	String
