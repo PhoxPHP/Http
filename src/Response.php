@@ -254,7 +254,7 @@ class Response
 	* @access 	public
 	* @return 	void
 	*/
-	public function goto(String $url=null, Int $code=200)
+	public function goto(String $url=null, Int $code=302)
 	{
 		$httpCodes = [
 			100 => "HTTP/1.1 100 Continue",
