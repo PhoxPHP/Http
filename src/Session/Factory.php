@@ -1,7 +1,7 @@
 <?php
 /**
 * @author 	Peter Taiwo
-* @version 	1.0.0
+* @version 	1.1.0
 *
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,17 +28,10 @@ namespace Kit\Http\Session;
 use App\AppManager;
 use ReflectionClass;
 use RuntimeException;
-use Kit\DependencyInjection\Injector\InjectorBridge;
-use Kit\Http\Session\Drivers\Interfaces\DriverInterface;
+use \Kit\Http\Session\Contracts\SessionDriverContract;
 
-class Factory extends InjectorBridge
+class Factory
 {
-
-	/**
-	* @var 		$interface
-	* @access 	private
-	*/
-	private 	$interface = "Kit\\Http\\Session\\Drivers\\Interfaces\\DriverInterface";
 
 	/**
 	* @var 		$driver
@@ -188,7 +181,7 @@ class Factory extends InjectorBridge
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getCreatedDate($key='')
+	public function getCreatedDate(String $key='')
 	{
 		return $this->getDriver()->getCreatedDate($key);
 	}
@@ -200,7 +193,7 @@ class Factory extends InjectorBridge
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getTimeout($key='')
+	public function getTimeout(String $key='')
 	{
 		return $this->getDriver()->getTimeout($key);
 	}
@@ -212,7 +205,7 @@ class Factory extends InjectorBridge
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function isExpired($key='')
+	public function isExpired(String $key='')
 	{
 		return $this->getDriver()->isExpired($key);
 	}
@@ -223,7 +216,7 @@ class Factory extends InjectorBridge
 	* @access 	public
 	* @return  	void
 	*/
-	public function incrementTimeout($key='', $timeout=60)
+	public function incrementTimeout(String $key='', $timeout=60)
 	{
 		return $this->getDriver()->incrementTimeout($key, $timeout);
 	}
@@ -234,7 +227,7 @@ class Factory extends InjectorBridge
 	* @access 	public
 	* @return 	void
 	*/
-	public function decrementTimeout($key='', $timeout=60)
+	public function decrementTimeout(String $key='', $timeout=60)
 	{
 		return $this->getDriver()->decrementTimeout($key, $timeout);
 	}
@@ -247,7 +240,7 @@ class Factory extends InjectorBridge
 	*/
 	public function getDriverName()
 	{
-		return $this->driver;
+		return $this->getConfiguration()->driver;
 	}
 
 	/**
@@ -263,24 +256,59 @@ class Factory extends InjectorBridge
 	}
 
 	/**
+	* Sets a flash message.
+	*
+	* @param 	$label <String>
+	* @param 	$message <String>
+	* @access 	public
+	* @return 	Mixed
+	*/
+	public function setFlash(String $label, String $message=null)
+	{
+		return $this->getDriver()->setFlash($label, $message);
+	}
+
+	/**
+	* Checks if flash exists with given label.
+	*
+	* @param 	$label <String> 	
+	* @access 	public
+	* @return 	Boolean
+	*/
+	public function hasFlash(String $label) : Bool
+	{
+		return $this->getDriver()->hasFlash($label);
+	}
+
+	/**
+	* Returns flash with given label.
+	*
+	* @param 	$label <String>
+	* @access 	public
+	* @return 	Mixed
+	*/
+	public function getFlash(String $label)
+	{
+		return $this->getDriver()->getFlash($label);
+	}
+
+	/**
 	* Returns the object of the session driver in use.
 	*
 	* @access 	protected
 	* @return 	Object
 	*/
-	protected function getDriver() : DriverInterface
+	protected function getDriver() : SessionDriverContract
 	{
-		$driver = ucfirst($this->getConfiguration()->driver);
-		$driver = "Kit\\Http\\Session\\Drivers\\$driver"."Driver";
+		$driver = $this->getConfiguration()->driver;
 		
 		if (class_exists($driver)) {
 
-			$driverObject = new ReflectionClass($driver);
+			$driverObject = new $driver($this);
+			$driverContract = SessionDriverContract::class;
 
-			if (!$driverObject->implementsInterface($this->interface)) {
-
-				throw new RuntimeException(sprintf("Invalid session driver object. Driver must implement %s.", $this->interface));
-			
+			if (!$driverObject instanceof $driverContract) {
+				throw new RuntimeException(sprintf("Invalid session driver object. Driver must implement %s.", $driverContract));
 			}
 
 			return new $driver($this);
@@ -295,7 +323,7 @@ class Factory extends InjectorBridge
 	*/
 	public function getConfiguration()
 	{
-		$config = $this->load('config')->get('session');
+		$config = app()->load('config')->get('session');
 		
 		if (gettype($config) !== 'array') {
 

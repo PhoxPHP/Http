@@ -1,7 +1,7 @@
 <?php
 /**
 * @author 	Peter Taiwo
-* @version 	1.0.0
+* @version 	1.0.5
 *
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,9 +23,9 @@
 * SOFTWARE.
 */
 
-namespace Kit\Http\Session\Drivers\Interfaces;
+namespace Kit\Http\Session\Contracts;
 
-interface DriverInterface
+interface SessionDriverContract
 {
 
 	/**
@@ -45,7 +45,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function create($key=null, $value=null, $duration=60);
+	public function create(String $key=null, $value=null, Int $duration=60);
 
 	/**
 	* Checks if session exists.
@@ -54,7 +54,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function exists($key=null);
+	public function exists(String $key=null);
 
 	/**
 	* Deletes a session from the session store.
@@ -63,7 +63,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function delete($key=null);
+	public function delete(String $key=null);
 
 	/**
 	* @access 	public
@@ -103,7 +103,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public function offset($offset=null);
+	public function offset(String $offset=null);
 
 	/**
 	* Deletes all session in the session store.
@@ -139,7 +139,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getCreatedDate($key=null);
+	public function getCreatedDate(String $key=null);
 
 	/**
 	* Returns the expiration time of a session.
@@ -147,7 +147,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	Integer
 	*/
-	public function getTimeout($key=null);
+	public function getTimeout(String $key=null);
 
 	/**
 	* Checks if a session has expired.
@@ -156,7 +156,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	Boolean
 	*/
-	public function isExpired($key=null);
+	public function isExpired(String $key=null);
 
 	/**
 	* Increments a session's timeout.
@@ -166,7 +166,7 @@ interface DriverInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function incrementTimeout($key=null, $timeout=60);
+	public function incrementTimeout(String $key=null, Int $timeout=60);
 
 	/**
 	* Derements a session's timeout.
@@ -176,6 +176,34 @@ interface DriverInterface
 	* @access 	public
 	* @return 	void
 	*/
-	public function decrementTimeout($key=null, $timeout=60);
+	public function decrementTimeout(String $key=null, Int $timeout=60);
+
+	/**
+	* Sets flash message.
+	* 
+	* @param 	$label <String>
+	* @param 	$message <String>
+	* @access 	public
+	* @return 	Mixed
+	*/
+	public function setFlash(String $label, String $message=null);
+
+	/**
+	* Checks if a flash with given label exists.
+	*
+	* @param 	$label <String>
+	* @access 	public
+	* @return 	Boolean
+	*/
+	public function hasFlash(String $label) : Bool;
+
+	/**
+	* Returns a flash with given label or null if it does not exist.
+	*
+	* @param 	$label <String>
+	* @access 	public
+	* @return 	Mixed
+	*/
+	public function getFlash(String $label);
 
 }
