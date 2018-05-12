@@ -26,7 +26,6 @@
 namespace Kit\Http\Router;
 
 use	StdClass;
-use App\Finder;
 use App\AppManager;
 use RuntimeException;
 use Kit\Prop\ClassLoader;
@@ -143,7 +142,6 @@ class Dispatcher implements DispatcherInterface
 			$this->controller->model = new $model();
 		}
 
-		$finder = new Finder;
 		$action = $array[2];		
 
 		if (!method_exists($this->controller, $action)) {
