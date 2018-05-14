@@ -87,15 +87,11 @@ class Dispatcher implements DispatcherInterface
 		$keys = array_keys($configuredRoute['parameters']);
 
 		if ($callback->type == 'string') {
-
 			return $this->applyStringCallback($callback->callback);
-		
 		}else{
-		
 			return call_user_func_array($callback->callback,  array_map(function($parameter) use ($parameters) {
 				return $parameters[$parameter];
 			}, $keys));
-		
 		}
 
 	}
@@ -111,12 +107,11 @@ class Dispatcher implements DispatcherInterface
 		$controller = $array[1];
 
 		if (!class_exists($controller)) {
-
-			throw new RuntimeException(sprintf("Unable to load {%s} controller.", $controller));
-		
+			throw new RuntimeException(sprintf("Unable to load {%s} controller.", $controller));		
 		}
 
-		$this->controller = new $controller();
+		$loader = new ClassLoader();
+		$this->controller = $loader->getInstanceOfClass($controller);
 
 		/**
 		* After creating an instance of the controller called, we'll check to see if the
@@ -124,9 +119,7 @@ class Dispatcher implements DispatcherInterface
 		* the parameters returned from the route.
 		*/
 		if (!property_exists($this->controller, 'routeParams')) {
-
 			throw new RuntimeException(app()->load('en_msg')->getMessage('no_default_route_param', ['controller' => $controller]));
-		
 		}
 
 		$route = $this->dispatchable->getConfiguredRoute();
@@ -145,27 +138,20 @@ class Dispatcher implements DispatcherInterface
 		$action = $array[2];		
 
 		if (!method_exists($this->controller, $action)) {
-
 			throw new RuntimeException(sprintf("Method {%s} not found in {%s} controller", $action, $controller));
-		
 		}
 
 		ob_start();
-		call_user_func_array([
-			$this->controller,
-			$action
-		], $route['parameters']);
-		$data = ob_get_contents();
+			$loader->callClassMethod($this->controller, $action, $route['parameters']);
+			$data = ob_get_contents();
 		ob_end_clean();
 
 		$this->appErrors = AppManager::getErrors();
 
 		if (sizeof($this->appErrors) > 0) {
-
 			foreach($this->appErrors as $error) {
 				AppManager::getInstance()->shutdown($error['number'], $error['message'], $error['file'], $error['line']);
 			}
-
 			exit;
 		}
 

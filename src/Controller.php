@@ -26,7 +26,6 @@
 namespace Kit\Http;
 
 use App\AppManager;
-use Kit\Http\Request;
 use RuntimeException;
 use Kit\View\Manager as ViewManager;
 
@@ -47,26 +46,23 @@ abstract class Controller
 
 	/**
 	* @var 		$request
-	* @access 	public
+	* @access 	private
 	*/
-	public 		$request;
+	private 	$request;
 
 	/**
 	* @var 		$response
-	* @access 	public
+	* @access 	private
 	*/
-	public 		$response;
+	private 	$response;
 
 	/**
-	* @access 	public
+	* @access 	private
 	* @return 	void
 	*/
 	public function __construct()
 	{
-		$this->request = app()->load('request');
-		$this->response = app()->load('response');
-		$manager = new ViewManager();
-		$this->view = $manager->getEngine();
+		//
 	}
 
 	/**
@@ -106,7 +102,7 @@ abstract class Controller
 	*/
 	public function setVariable(String $variable='', $value='')
 	{
-		$this->view->setVariable($variable, $value);
+		$this->view()->setVariable($variable, $value);
 	}
 
 	/**
@@ -118,7 +114,7 @@ abstract class Controller
 	*/
 	public function getVariable(String $variable='')
 	{
-		return $this->view->getVariable($variable);
+		return $this->view()->getVariable($variable);
 	}
 
 	/**
@@ -131,7 +127,41 @@ abstract class Controller
 	*/
 	public function render(String $template='', String $layout='')
 	{
-		return $this->view->render($template, $layout);
+		return $this->view()->render($template, $layout);
+	}
+
+	/**
+	* Returns instance of default view engine.
+	*
+	* @access 	public
+	* @return 	Object
+	*/
+	protected function view()
+	{
+		$manager = new ViewManager();
+		return $manager->getEngine();
+	}
+
+	/**
+	* Returns an instance of Kit\Http\Request\RequestManager
+	*
+	* @access 	public
+	* @return 	Object <Kit\Http\Request\RequestManager>
+	*/
+	public function request()
+	{
+		return app()->load('request');
+	}
+
+	/**
+	* Returns an instance of Kit\Http\Request\Response
+	*
+	* @access 	public
+	* @return 	Object <Kit\Http\Request\Response>
+	*/
+	public function response()
+	{
+		return app()->load('response');
 	}
 
 	/**
