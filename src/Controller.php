@@ -98,11 +98,11 @@ abstract class Controller
 	* @param 	$variable <String>
 	* @param 	$value <Mixed>
 	* @access 	public
-	* @return 	void
+	* @return 	Object
 	*/
 	public function setVariable(String $variable='', $value='')
 	{
-		$this->view()->setVariable($variable, $value);
+		return $this->view()->setVariable($variable, $value);
 	}
 
 	/**
