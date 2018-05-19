@@ -22,31 +22,21 @@
 
 /**
 * @author 	Peter Taiwo
+* @package 	Kit\Http\Router\Contracts\ControllerFilterContract;
 */
 
-namespace Http\Router\Middleware\Interfaces;
+namespace Kit\Http\Router\Contracts;
 
-interface MiddlewareInterface {
-
-	/**
-	* @access 	public
-	* @return 	void
-	*/
-	public function beforeMiddleware();
+interface ControllerFilterContract {
 
 	/**
-	* @access 	public
-	* @return 	void
-	*/
-	public function afterMiddleware();
-
-	/**
-	* Return true to make middleware available or set false
-	* to make it unavailable.
+	* Invoke filter.
 	*
+	* @param 	$request <Object>
+	* @param 	$response <Object>
 	* @access 	public
-	* @return 	Boolean
+	* @return 	Mixed
 	*/
-	public function register();
+	public function call($request, $response);
 
 }

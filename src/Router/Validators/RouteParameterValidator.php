@@ -28,9 +28,9 @@ namespace Kit\Http\Router\Validators;
 use Kit\Http\Router\Repository;
 use Kit\Http\Router\Validators\Bag as ValidatorsRepo;
 use Kit\Http\Router\Exceptions\InvalidValidatorSizeException;
-use Kit\Http\Router\Validators\Interfaces\ValidatorInterface;
+use Kit\Http\Router\Validators\Contracts\ValidatorContract;
 
-class RouteParameterValidator implements ValidatorInterface
+class RouteParameterValidator implements ValidatorContract
 {
 
 	/**
@@ -106,9 +106,7 @@ class RouteParameterValidator implements ValidatorInterface
 				}
 
 				if ($validator[$validatorLength - 1] !== "/") {
-				
 					$validator = "$validator/";
-				
 				}
 
 				$validatorFallbackObjectArguments = $this->repository->config('Router', 'slug_validation_options');
@@ -124,7 +122,6 @@ class RouteParameterValidator implements ValidatorInterface
 						array_map(function($closure) use ($validatorFallbackObjectArguments, $slugs) {
 					
 							$arguments = $validatorFallbackObjectArguments['fallback_method_default_arguments'];
-					
 							return call_user_func_array($closure, array_map(function($slug) { return $slug; }, array_values($slugs)));
 					
 						}, $closures);

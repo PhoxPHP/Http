@@ -27,7 +27,7 @@ namespace Kit\Http\Router;
 
 use StdClass;
 use Kit\Http\Router\Builder;
-use Kit\Http\Router\Interfaces\RouterInterface;
+use Kit\Http\Router\Contracts\RepositoryContract;
 
 class Bag
 {
@@ -57,25 +57,25 @@ class Bag
 	private static $matchedRoute = [];
 
 	/**
-	* @param 	$router Http\Router\Interfaces\RouterInterface
+	* @param 	$router Http\Router\Contracts\RepositoryContract
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(RouterInterface $router)
+	public function __construct(RepositoryContract $router)
 	{
 		$this->router = $router;
 		Bag::$routes = array('get' => array(), 'post' => array(), 'put' => array(), 'delete' => array(), 'all' => array());
 	}
 
 	/**
-	* @param 	$router Http\Router\Interfaces\RouterInterface
+	* @param 	$router Http\Router\Contracts\RepositoryContract
 	* @param 	$method <String>
 	* @param 	$callback <Mixed>
 	* @param 	$validator <Array>
 	* @access 	public
 	* @return 	void
 	*/
-	public function pushRoute(RouterInterface $router, $method='', $callback='', array $validator=array())
+	public function pushRoute(RepositoryContract $router, $method='', $callback='', array $validator=array())
 	{
 		$routeObject = new StdClass;
 

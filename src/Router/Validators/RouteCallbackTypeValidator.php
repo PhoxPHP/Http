@@ -70,11 +70,9 @@ class RouteCallbackTypeValidator
 		$callback = $route['callback'];
 
 		if (gettype($callback) == 'object') {
-
+			
 			$this->typeObject->type = 'object';
-			
 			$this->typeObject->callback = $callback;
-			
 			return;
 		
 		}
@@ -82,11 +80,8 @@ class RouteCallbackTypeValidator
 		if (gettype($callback) == 'string') {
 
 			$typeOk = ($this->typePrimary($callback) == true || $this->typeSecondary($callback) == true);
-			
 			if (!$typeOk) {
-			
 				throw new RuntimeException(sprintf("Callback type not recognized. %s type provided.", gettype($callback)));
-			
 			}
 		}
 	}

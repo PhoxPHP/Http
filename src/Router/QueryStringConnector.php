@@ -25,8 +25,8 @@
 
 namespace Kit\Http\Router;
 
-use Kit\Http\Router\{Repository, Bag};
 use RuntimeException;
+use Kit\Http\Router\{Repository, Bag};
 
 class QueryStringConnector
 {
@@ -67,9 +67,7 @@ class QueryStringConnector
 	public function setRuleFor($route, $rule=false)
 	{
 		if (QueryStringConnector::isQueued($route)) {
-
 			throw new RuntimeException(app()->load('en_msg')->getMessage('query_string_rule_exists', ['route' => $route]));
-		
 		}
 
 		QueryStringConnector::$connectorList[$route] = (Integer) $rule;

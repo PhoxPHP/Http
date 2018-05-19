@@ -1,7 +1,7 @@
 <?php
-namespace Kit\Http\Router\Validators\Interfaces;
+namespace Kit\Http\Router\Validators\Contracts;
 
-interface ValidatorInterface
+interface ValidatorContract
 {
 
 	/**
