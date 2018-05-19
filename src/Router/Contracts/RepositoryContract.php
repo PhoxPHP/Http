@@ -23,12 +23,12 @@
 * SOFTWARE.
 */
 
-namespace Kit\Http\Router\Interfaces;
+namespace Kit\Http\Router\Contracts;
 
 use Closure;
 use Kit\Http\Router\Repository;
 
-interface RouterInterface
+interface RepositoryContract
 {
 
 	/**
@@ -38,7 +38,7 @@ interface RouterInterface
 	* @param 	$callback <Mixed>
 	* @param 	$prefix <Array>
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
 	public function get($route=null, $callback=null, $prefix=array()) : Repository;
 
@@ -49,7 +49,7 @@ interface RouterInterface
 	* @param 	$callback <Mixed>
 	* @param 	$prefix <Array>
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
 	public function post($route=null, $callback=null, $prefix=array()) : Repository;
 
@@ -60,7 +60,7 @@ interface RouterInterface
 	* @param 	$callback <Mixed>
 	* @param 	$prefix <Array>
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
 	public function put($route=null, $callback=null, $prefix=array()) : Repository;
 
@@ -71,7 +71,7 @@ interface RouterInterface
 	* @param 	$callback <Mixed>
 	* @param 	$prefix <Array>
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
 	public function delete($route=null, $callback=null, $prefix=array()) : Repository;
 
@@ -82,7 +82,7 @@ interface RouterInterface
 	* @param 	$callback <Mixed>
 	* @param 	$prefix <Array>
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
 	public function default($route=null, $callback=null, $prefix=array()) : Repository;
 
@@ -114,12 +114,23 @@ interface RouterInterface
 	public function getConfiguredRoute() : Array;
 
 	/**
+	* Register before filters.
+	*
 	* @access 	public
-	* @return 	void
+	* @return 	Object <Kit\Http\Router\Repository>
 	*/
-	public function attachMiddleWare();
+	public function before() : Repository;
 
 	/**
+	* Register after filters.
+	*
+	* @access 	public
+	* @return 	Object <Kit\Http\Router\Repository>
+	*/
+	public function after() : Repository;
+
+	/**
+	*
 	* @param 	$toString <Boolean>
 	* @access 	public
 	* @return 	String|Array

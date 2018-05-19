@@ -41,11 +41,8 @@ class Config
 		}
 
 		$file = include 'src/Config/'.$file.'.php';
-	
 		if (gettype($file) !== 'array') {
-			
 			return;
-
 		}
 
 		return $file[$key] ?? $key;

@@ -67,11 +67,8 @@ class Alias
 		$route = $repository->getTempRoute();
 
 		if (strlen($alias) > 0 && !Alias::hasAlias($alias)) {
-		
 			Alias::$aliases[$alias] = $route;
-		
 			return true;
-		
 		}
 
 		return false;

@@ -72,9 +72,7 @@ class Bag
 	public function from($criteria='') : Bag
 	{
 		if (!in_array($criteria, $this->requestCriteriaList)) {
-		
 			throw new RuntimeException(sprintf('%s is not a valid shared route method', $criteria));
-		
 		}
 
 		$this->criteria = $criteria;
@@ -104,9 +102,7 @@ class Bag
 		$sharedMethod = $repository->getSharedRouteMethod();
 
 		if (!in_array($sharedMethod, $this->requestCriteriaList)) {
-		
 			throw new RuntimeException(sprintf('%s is not a valid shared route method', $sharedMethod));
-		
 		}
 
 		Bag::$validatorsFallback[$sharedMethod][$repository->getTempRoute()][] = $fallbackClosure;

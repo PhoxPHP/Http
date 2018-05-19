@@ -23,6 +23,6 @@
 * SOFTWARE.
 */
 
-namespace Kit\Http\Router\Interfaces;
+namespace Kit\Http\Router\Contracts;
 
 interface Dispatchable {}

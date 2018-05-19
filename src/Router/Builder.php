@@ -397,11 +397,8 @@ class Builder
 		$response->slugs = array();
 
 		foreach($response->split as $segment) {
-		
 			if (preg_match("/:.*/", $segment, $match)) {
-		
 				$response->slugs[str_replace(':', '', $segment)] = $segment; 
-		
 			}
 		}
 

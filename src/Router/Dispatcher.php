@@ -29,12 +29,13 @@ use	StdClass;
 use App\AppManager;
 use RuntimeException;
 use Kit\Prop\ClassLoader;
+use	Kit\Http\Router\Middleware;
 use	Kit\Http\Router\Repository;
-use	Kit\Http\Router\Interfaces\Dispatchable;
-use	Kit\Http\Router\Interfaces\DispatcherInterface;
+use	Kit\Http\Router\Contracts\Dispatchable;
+use	Kit\Http\Router\Contracts\DispatcherContract;
 use Kit\Http\Router\Validators\RouteCallbackTypeValidator;
 
-class Dispatcher implements DispatcherInterface
+class Dispatcher implements DispatcherContract
 {
 
 	/**
@@ -44,22 +45,16 @@ class Dispatcher implements DispatcherInterface
 	protected 	$controller;
 
 	/**
-	* @var 		$model
+	* @var 		$dispatchable
 	* @access 	protected
 	*/
-	protected 	$model;
-
-	/**
-	* @var 		$dispatchable
-	* @access 	private
-	*/
-	private 	$dispatchable;
+	protected 	$dispatchable;
 
 	/**
 	* @var 		$appErrors
-	* @access 	private
+	* @access 	protected
 	*/
-	private 	$appErrors = [];
+	protected 	$appErrors = [];
 
 	/**
 	* Construct method accepts the requires the dispatchable interface where
@@ -89,11 +84,15 @@ class Dispatcher implements DispatcherInterface
 		if ($callback->type == 'string') {
 			return $this->applyStringCallback($callback->callback);
 		}else{
-			return call_user_func_array($callback->callback,  array_map(function($parameter) use ($parameters) {
-				return $parameters[$parameter];
-			}, $keys));
-		}
+			$this->processFilters('before');
 
+			call_user_func_array($callback->callback, array_map(function($parameter) use ($parameters) {
+					return $parameters[$parameter];
+				}, $keys)
+			);
+
+			$this->processFilters('after');
+		}
 	}
 
 	/**
@@ -103,7 +102,6 @@ class Dispatcher implements DispatcherInterface
 	*/
 	private function applyStringCallback(array $array=[])
 	{
-		// Dispatch......
 		$controller = $array[1];
 
 		if (!class_exists($controller)) {
@@ -111,37 +109,34 @@ class Dispatcher implements DispatcherInterface
 		}
 
 		$loader = new ClassLoader();
+
 		$this->controller = $loader->getInstanceOfClass($controller);
-
-		/**
-		* After creating an instance of the controller called, we'll check to see if the
-		* controller has the required "routeParams" property. This property will be used to access
-		* the parameters returned from the route.
-		*/
-		if (!property_exists($this->controller, 'routeParams')) {
-			throw new RuntimeException(app()->load('en_msg')->getMessage('no_default_route_param', ['controller' => $controller]));
-		}
-
 		$route = $this->dispatchable->getConfiguredRoute();
-		$this->controller->routeParams = $route['parameters'];
 		$model = null;
 
-		if (gettype($this->controller->registerModel()) == 'string') {
-			$model = $this->controller->registerModel();
-			if (!class_exists($model)) {
-				throw new RuntimeException(app()->load('en_msg')->getMessage('no_model_found', ['model' => $model]));				
-			}
+		$action = $array[2];
 
-			$this->controller->model = new $model();
+		if ($action == '__construct') {
+			throw new RuntimeException(
+				sprintf(
+					'Cannot call %s method as an action',
+					'__construct'
+				)
+			);
 		}
 
-		$action = $array[2];		
-
 		if (!method_exists($this->controller, $action)) {
-			throw new RuntimeException(sprintf("Method {%s} not found in {%s} controller", $action, $controller));
+			throw new RuntimeException(
+				sprintf(
+					'Method {%s} not found in {%s} controller',
+					$action,
+					$controller
+				)
+			);
 		}
 
 		ob_start();
+			$this->processFilters('before');
 			$loader->callClassMethod($this->controller, $action, $route['parameters']);
 			$data = ob_get_contents();
 		ob_end_clean();
@@ -156,26 +151,37 @@ class Dispatcher implements DispatcherInterface
 		}
 
 		eval("?> $data <?php ");
+
+		// Run after filters
+		$this->processFilters('after');
 	}
 
 	/**
-	* @param 	$string <String>
-	* @access 	private
-	* @return 	String
+	* Invokes all filter objects.
+	*
+	* @param 	$type <String>
+	* @access 	protected
+	* @return 	void
 	*/
-	private function getControllerName($string='')
+	protected function processFilters(String $type='before')
 	{
-		return (String) $string.'Controller';
-	}
+		$registeredFilters = Repository::getRegisteredFilters();
+		$filters = $registeredFilters[$type] ?? null;
 
-	/**
-	* @param 	$string <String>
-	* @access 	private
-	* @return 	String
-	*/
-	private function getViewName($string='')
-	{
-		return (String) $string.'View';
-	}
+		if ($filters == null) {
+			return;
+		}
+
+		$configFilters = config('router')->get('filters');
+		foreach($filters as $handle) {
+			$handle = $configFilters[$handle];
+			$filter = app()->load('loader')->callClassMethod(
+				new $handle(),
+				'call',
+				app()->load('request'),
+				app()->load('response')
+			);
+		}
+	} 
 
 }

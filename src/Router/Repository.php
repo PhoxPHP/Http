@@ -28,12 +28,12 @@ namespace Kit\Http\Router;
 use Closure;
 use App\Config;
 use RuntimeException;
-use Kit\DependencyInjection\Injector\InjectorBridge;
-use Kit\Http\Router\Interfaces\{RouterInterface, Dispatchable};
+use Kit\Http\Router\ControllerFilter;
+use Kit\Http\Router\Contracts\{RepositoryContract, Dispatchable};
 use Kit\Http\Router\{Alias, Builder, Bag, Dispatcher, QueryStringConnector};
 use Kit\Http\Router\Validators\{RouteParameterValidator, RouteCallbackTypeValidator, Bag as ValidatorsRepo};
 
-class Repository implements RouterInterface, Dispatchable
+class Repository implements RepositoryContract, Dispatchable
 {
 
 	/**
@@ -101,6 +101,12 @@ class Repository implements RouterInterface, Dispatchable
 	* @access 	private
 	*/
 	private 	$routeMethod;
+
+	/**
+	* @var 		$filters
+	* @access 	private
+	*/
+	private static $filters = [];
 
 	########################
 	# CONSTANTS
@@ -214,12 +220,30 @@ class Repository implements RouterInterface, Dispatchable
 	}
 
 	/**
-	* Attaches registered middleware to router.
+	* Registers before filters.
 	*
+	* @param 	$labels <Array>
 	* @access 	public
 	* @return 	void
 	*/
-	public function attachMiddleWare() {}
+	public function before(...$labels) : Repository
+	{
+		Repository::$filters['before'] = $labels;
+		return $this;
+	}
+
+	/**
+	* Registers after filters.
+	*
+	* @param 	$labels <Array>
+	* @access 	public
+	* @return 	void
+	*/
+	public function after(...$labels) : Repository
+	{
+		Repository::$filters['after'] = $labels;
+		return $this;
+	}
 
 	/**
 	* Returns the route that is passed to Http\Router\Builder.
@@ -380,9 +404,7 @@ class Repository implements RouterInterface, Dispatchable
 		if (empty(Bag::getAccessedRoute()) && intval($this->routeBuilder->__build) !== 1) {
 
 			if (config('router')->get('throw_404_error') == true) {
-			
 				$errorException = config('router')->get('404_error_exception');
-			
 				throw new $errorException(sprintf("Route %s not registered.", $this->getRequestUri(true)));
 			
 			}
@@ -407,7 +429,42 @@ class Repository implements RouterInterface, Dispatchable
 
 		$dispatcher = new Dispatcher($this);
 		return $dispatcher->dispatch($callback);
+	}
 
+	/**
+	* Returns an array of registered named middleware.
+	*
+	* @access 	public
+	* @return 	Array
+	* @static
+	*/
+	public static function getRegisteredFilters()
+	{
+		return Repository::$filters;
+	}
+
+	/**
+	* Returns before filters.
+	*
+	* @access 	public
+	* @return 	Array
+	* @static
+	*/
+	public static function getBeforeFilters() : Array
+	{
+		return Repository::$filters['before'] ?? [];
+	}
+
+	/**
+	* Returns after filters.
+	*
+	* @access 	public
+	* @return 	Array
+	* @static
+	*/
+	public static function getAfterFilters() : Array
+	{
+		return Repository::$filters['after'] ?? [];
 	}
 
 }
