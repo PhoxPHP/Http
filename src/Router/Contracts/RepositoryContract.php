@@ -130,6 +130,15 @@ interface RepositoryContract
 	public function after() : Repository;
 
 	/**
+	* Sets a route domain.
+	*
+	* @param 	$domain <String>
+	* @access 	public
+	* @return 	Object <Kit\Http\Router\Repository>
+	*/
+	public function domain(String $domain);
+
+	/**
 	*
 	* @param 	$toString <Boolean>
 	* @access 	public
