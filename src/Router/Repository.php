@@ -28,10 +28,18 @@ namespace Kit\Http\Router;
 use Closure;
 use App\Config;
 use RuntimeException;
+use Kit\Http\Router\Bag;
+use Kit\Http\Router\Alias;
+use Kit\Http\Router\Builder;
+use Kit\Http\Router\DomainBag;
+use Kit\Http\Router\Dispatcher;
 use Kit\Http\Router\ControllerFilter;
-use Kit\Http\Router\Contracts\{RepositoryContract, Dispatchable};
-use Kit\Http\Router\{Alias, Builder, Bag, Dispatcher, QueryStringConnector};
-use Kit\Http\Router\Validators\{RouteParameterValidator, RouteCallbackTypeValidator, Bag as ValidatorsRepo};
+use Kit\Http\Router\QueryStringConnector;
+use Kit\Http\Router\Contracts\Dispatchable;
+use Kit\Http\Router\Contracts\RepositoryContract;
+use Kit\Http\Router\Validators\Bag as ValidatorsRepo;
+use Kit\Http\Router\Validators\RouteParameterValidator;
+use Kit\Http\Router\Validators\RouteCallbackTypeValidator;
 
 class Repository implements RepositoryContract, Dispatchable
 {
@@ -209,10 +217,6 @@ class Repository implements RepositoryContract, Dispatchable
 
 	/**
 	* {@inheritDoc}
-	*
-	* @param 	$route <String>
-	* @access 	public
-	* @return 	Boolean
 	*/
 	public static function hasRoute($route='')
 	{
@@ -220,11 +224,7 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
-	* Registers before filters.
-	*
-	* @param 	$labels <Array>
-	* @access 	public
-	* @return 	void
+	* {@inheritDoc}
 	*/
 	public function before(...$labels) : Repository
 	{
@@ -233,11 +233,7 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
-	* Registers after filters.
-	*
-	* @param 	$labels <Array>
-	* @access 	public
-	* @return 	void
+	* {@inheritDoc}
 	*/
 	public function after(...$labels) : Repository
 	{
@@ -246,10 +242,7 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
-	* Returns the route that is passed to Http\Router\Builder.
-	*
-	* @access 	public
-	* @return 	String
+	* {@inheritDoc}
 	*/
 	public function getTempRoute()
 	{
@@ -257,8 +250,7 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
-	* @access 	public
-	* @return 	Mixed
+	* {@inheritDoc}
 	*/
 	public function getTempCallback()
 	{
@@ -275,12 +267,21 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
-	* This method returns the filtered request uri.
-	* E.g: /profile/id/1/
-	*
-	* @param 	$toString <Boolean>
-	* @access 	public
-	* @return 	String|Array
+	* {@inheritDoc}
+	*/
+	public function domain(String $domain)
+	{
+		DomainBag::registerRouteDomain(
+			$this->getTempRoute(),
+			$domain,
+			$this->getSharedRouteMethod()
+		);
+
+		return $this;
+	}
+
+	/**
+	* {@inheritDoc}
 	*/
 	public function getRequestUri($toString=false)
 	{

@@ -27,6 +27,7 @@ namespace Kit\Http\Router;
 
 use StdClass;
 use RuntimeException;
+use Kit\Http\Router\Validators\DomainValidator;
 use Kit\Http\Router\{Repository, Bag, QueryStringConnector};
 
 class Builder
@@ -138,20 +139,25 @@ class Builder
 
 				$this->routeLabel = $route;
 
+				$domainValidator = new DomainValidator();
+				$domainIsValidated = $domainValidator->validateDomain(
+					$route,
+					$routes[$route]['shared_method']
+				);
+
+				if (!$domainIsValidated) {
+					continue;
+				}
+
 				if(!in_array(gettype($routeCallback), $this->callbackTypes)) {
-				
 					throw new RuntimeException(sprintf("Unknown error occured."));
-				
 				}
 
 				foreach(explode("/", $route) as $i) {
 
 					if(!empty($i)) {
-					
 						if (QueryStringConnector::isQueued("/$i") && (Integer) QueryStringConnector::getValidationFor("/$i") == 0) {
-					
 							$i = $this->resolveRouteQueryString("/$i");
-					
 						}
 
 						$routeArray[] = $i;
@@ -165,26 +171,19 @@ class Builder
 				}
 
 				if (empty($requestUriArray)) {
-
 					$requestUriArray = ['/'];
-				
 				}
 
 				if (empty($routeArray)) {
-
-					$routeArray = ['/'];
-				
+					$routeArray = ['/'];				
 				}
 
 				// The uri will only be parsed if the size of requestUri is the same with the route count...
 				if(sizeof($requestUriArray) == sizeof($routeArray)) {
 
 					$routeObject = $this->resolveRoute($routeArray);
-					
 					$this->tempRoute = $routeObject->uri;
-					
 					$this->tempCallback = $routeCallback;
-					
 					$this->sharedMethod = $routes[$route]['shared_method'];
 
 					if (QueryStringConnector::isQueued("$route") && QueryStringConnector::getValidationFor("$route") == 0) {
@@ -196,22 +195,16 @@ class Builder
 					$routeUrl = implode("/", $routeArray);
 
 					if (strlen($routeUrl) > 0 && $routeUrl[0] != '/') {
-					
 						$routeUrl = '/'.$routeUrl;
-					
 					}
 
 					if (strlen($requestUri) > 0 && $requestUri[0] != '/') {
-
 						$requestUri = '/'.$requestUri;
-					
 					}
 
 					// Setting this for empty routes..
 					if ($requestUri == '') {
-
 						$requestUri = '/';
-					
 					}
 
 					if (empty($routeObject->slugs) && $requestUri == $routeUrl) {
