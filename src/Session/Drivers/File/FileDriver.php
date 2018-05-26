@@ -28,6 +28,7 @@ namespace Kit\Http\Session\Drivers\File;
 use StdClass;
 use Kit\Http\Session\Factory;
 use Kit\Http\Session\Drivers\File\Flash;
+use Kit\Http\Session\Drivers\File\Token;
 use Kit\Http\Session\Contracts\SessionDriverContract;
 
 trait FileDriverCommand
@@ -441,6 +442,26 @@ class FileDriver implements SessionDriverContract
 	{
 		$flash = new Flash($this);
 		return $flash->get($label);
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function getToken() : String
+	{
+		return (new Token($this))->generateAndReturnToken();
+	}
+
+	/**
+	* {@inheritDoc}
+	*/	
+	public function verifyToken() : Bool
+	{
+		if ((new Token($this))->verifyToken()) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

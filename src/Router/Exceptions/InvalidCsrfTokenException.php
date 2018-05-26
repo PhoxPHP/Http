@@ -1,5 +1,8 @@
 <?php
 /**
+* @author 	Peter Taiwo
+* @since 	1.5.0
+*
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +23,43 @@
 * SOFTWARE.
 */
 
-/**
-* @author 	Peter Taiwo
-* @package 	Kit\Http\Router\Contracts\ControllerFilterContract;
-*/
+namespace Kit\Http\Router\Exceptions;
 
-namespace Kit\Http\Router\Contracts;
+use Exception;
+use App\BaseException;
+use App\Exceptions\Contract\ExceptionContract;
 
-use Kit\Http\Response;
-use Kit\Http\Session\Factory;
-use Kit\Http\Request\RequestManager;
-
-interface ControllerFilterContract {
+class InvalidCsrfTokenException extends BaseException implements ExceptionContract
+{
 
 	/**
-	* Invoke filter.
+	* Construct.
 	*
-	* @param 	$request <Kit\Http\Request\RequestManager>
-	* @param 	$response <Kit\Http\Response>
-	* @param 	$sessionFactory <Kit\Http\Session\Factory>
+	* @param 	$message <String>
 	* @access 	public
-	* @return 	Mixed
+	* @return 	void
 	*/
-	public function call(RequestManager $request, Response $response, Factory $sessionFactory);
+	public function __construct(...$options)
+	{
+		$this->setMessage($options[0]);
+		$this->setCode(500);
+		parent::__construct();
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function setMessage(String $message)
+	{
+		$this->message = $message;
+	}
+
+	/**
+	* {@inheritDoc}
+	*/
+	public function setCode(int $code)
+	{
+		$this->code = $code;
+	}
 
 }

@@ -1,5 +1,8 @@
 <?php
 /**
+* @author 	Peter Taiwo
+* @since 	v1.5.0
+*
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +23,28 @@
 * SOFTWARE.
 */
 
-/**
-* @author 	Peter Taiwo
-* @package 	Kit\Http\Router\Contracts\ControllerFilterContract;
-*/
-
-namespace Kit\Http\Router\Contracts;
+namespace Kit\Http\Router\Filters;
 
 use Kit\Http\Response;
 use Kit\Http\Session\Factory;
 use Kit\Http\Request\RequestManager;
+use Kit\Http\Router\Contracts\ControllerFilterContract;
+use Kit\Http\Router\Exceptions\InvalidCsrfTokenException;
 
-interface ControllerFilterContract {
+class CsrfTokenFilter implements ControllerFilterContract
+{
 
 	/**
-	* Invoke filter.
-	*
-	* @param 	$request <Kit\Http\Request\RequestManager>
-	* @param 	$response <Kit\Http\Response>
-	* @param 	$sessionFactory <Kit\Http\Session\Factory>
-	* @access 	public
-	* @return 	Mixed
+	* {@inheritDoc}
 	*/
-	public function call(RequestManager $request, Response $response, Factory $sessionFactory);
+	public function call(RequestManager $request, Response $response, Factory $sessionFactory)
+	{
+		$tokenInput = config('session')->get('csrf_token_input_name');
+		if ($request->getInput($tokenInput)) {
+			if ($sessionFactory->get($tokenInput) !== $request->getInput($tokenInput)) {
+				throw new InvalidCsrfTokenException('Token is not a valid csrf token.');
+			}
+		}
+	}
 
 }

@@ -206,4 +206,20 @@ interface SessionDriverContract
 	*/
 	public function getFlash(String $label);
 
+	/**
+	* Generates and returns token.
+	*
+	* @access 	public
+	* @return 	String
+	*/
+	public function getToken() : String;
+
+	/**
+	* Verifies csrf token.
+	*
+	* @access 	public
+	* @return 	String
+	*/	
+	public function verifyToken() : Bool;
+
 }

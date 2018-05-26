@@ -172,6 +172,10 @@ class Dispatcher implements DispatcherContract
 			return;
 		}
 
+		if ($type == 'before' && !in_array('csrf', $filters)) {
+			$filters[] = 'csrf';
+		}
+
 		$configFilters = config('router')->get('filters');
 		foreach($filters as $handle) {
 			$handle = $configFilters[$handle];

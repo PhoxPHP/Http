@@ -1,5 +1,8 @@
 <?php
 /**
+* @author 	Peter Taiwo
+* @since 	v1.5.0
+*
 * MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +23,50 @@
 * SOFTWARE.
 */
 
-/**
-* @author 	Peter Taiwo
-* @package 	Kit\Http\Router\Contracts\ControllerFilterContract;
-*/
+namespace Kit\Http\Session\Drivers\File;
 
-namespace Kit\Http\Router\Contracts;
+use Kit\Http\Session\Drivers\File\FileDriver;
+use Kit\Http\Session\Contracts\FlashContract;
 
-use Kit\Http\Response;
-use Kit\Http\Session\Factory;
-use Kit\Http\Request\RequestManager;
-
-interface ControllerFilterContract {
+class Token
+{
 
 	/**
-	* Invoke filter.
-	*
-	* @param 	$request <Kit\Http\Request\RequestManager>
-	* @param 	$response <Kit\Http\Response>
-	* @param 	$sessionFactory <Kit\Http\Session\Factory>
-	* @access 	public
-	* @return 	Mixed
+	* @var 		$driver
+	* @access 	protected
 	*/
-	public function call(RequestManager $request, Response $response, Factory $sessionFactory);
+	protected	$driver;
+
+	/**
+	* Token constructor.
+	*
+
+	* @access 	public
+	* @return 	void
+	*/
+	public function __construct(FileDriver $driver)
+	{
+		$this->driver = $driver;
+	}
+
+	/**
+	* Generate and return token.
+	*
+	* @param 	$driver <Kit\Http\Session\Drivers\File\FileDriver>
+	* @access 	public
+	* @return 	String
+	*/
+	public function generateAndReturnToken() : String
+	{
+		$token = base64_encode(openssl_random_pseudo_bytes(32));
+		$this->driver->delete(config('session')->get('csrf_token_input_name'));
+		$this->driver->create(
+			config('session')->get('csrf_token_input_name'),
+			$token,
+			86400
+		);
+
+		return $token;
+	}
 
 }
