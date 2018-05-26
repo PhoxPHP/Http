@@ -293,6 +293,28 @@ class Factory
 	}
 
 	/**
+	* Generates and returns a csrf token.
+	*
+	* @access 	public
+	* @return 	String
+	*/
+	public function token(String $formOrRequestName=null)
+	{
+		return $this->getDriver()->getToken($formOrRequestName);
+	}
+
+	/**
+	* Verifies a csrf token.
+	*
+	* @access 	public
+	* @return 	String
+	*/
+	public function verifyToken()
+	{
+		return $this->getDriver()->verifyToken();
+	}
+
+	/**
 	* Returns the object of the session driver in use.
 	*
 	* @access 	protected

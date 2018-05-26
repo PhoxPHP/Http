@@ -57,16 +57,16 @@ class Response
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct(RequestManager $request, $body='', $headers=null)
+	public function __construct(RequestManager $request=null, $body='', $headers=null)
 	{
-		$this->request = (Object) $request->getReponse($this);
-		$this->body = $body;
-		$this->headers = $headers;
+		if ($request instanceof RequestManager) {
+			$this->request = (Object) $request->getReponse($this);
+			$this->body = $body;
+			$this->headers = $headers;
 
-		if (gettype($headers) == 'string') {
-
-			$this->headers = explode("\n", $headers);
-		
+			if (gettype($headers) == 'string') {
+				$this->headers = explode("\n", $headers);
+			}
 		}
 	}
 
@@ -254,7 +254,7 @@ class Response
 	* @access 	public
 	* @return 	void
 	*/
-	public function goto(String $url=null, Int $code=302)
+	public function redirect(String $url=null, Int $code=302)
 	{
 		$httpCodes = [
 			100 => "HTTP/1.1 100 Continue",
