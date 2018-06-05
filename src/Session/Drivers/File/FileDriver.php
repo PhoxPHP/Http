@@ -104,9 +104,9 @@ class FileDriver implements SessionDriverContract
 	public function __construct(Factory $factory) {
 		$this->factory = $factory;
 		$storage = $this->config()->storage;
-		session_save_path($storage);
 
 		if (session_status() == PHP_SESSION_NONE) {
+			session_save_path($storage);
 			session_start();
 		}
 	}
