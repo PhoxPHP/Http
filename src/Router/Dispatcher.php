@@ -67,7 +67,6 @@ class Dispatcher implements DispatcherContract
 	public function __construct(Dispatchable $dispatchable)
 	{
 		$this->dispatchable = $dispatchable;
-		$this->appErrors = AppManager::getErrors();
 	}
 
 	/**
@@ -140,15 +139,6 @@ class Dispatcher implements DispatcherContract
 			$loader->callClassMethod($this->controller, $action, $route['parameters']);
 			$data = ob_get_contents();
 		ob_end_clean();
-
-		$this->appErrors = AppManager::getErrors();
-
-		if (sizeof($this->appErrors) > 0) {
-			foreach($this->appErrors as $error) {
-				AppManager::getInstance()->shutdown($error['number'], $error['message'], $error['file'], $error['line']);
-			}
-			exit;
-		}
 
 		eval("?> $data <?php ");
 

@@ -1,19 +1,16 @@
 <?php
 /**
-* @author 	Peter Taiwo
-* @version 	1.0.0
+* @author 		Peter Taiwo <peter@phoxphp.com>
+* @package 		Kit\Http\Router\Repository
+* @license 		MIT License
 *
-* MIT License
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
 * in the Software without restriction, including without limitation the rights
 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 * copies of the Software, and to permit persons to whom the Software is
 * furnished to do so, subject to the following conditions:
-
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,6 +35,7 @@ use Kit\Http\Router\QueryStringConnector;
 use Kit\Http\Router\Contracts\Dispatchable;
 use Kit\Http\Router\Contracts\RepositoryContract;
 use Kit\Http\Router\Validators\Bag as ValidatorsRepo;
+use Kit\Http\Router\Exceptions\RouteNotFoundException;
 use Kit\Http\Router\Validators\RouteParameterValidator;
 use Kit\Http\Router\Validators\RouteCallbackTypeValidator;
 
@@ -396,21 +394,26 @@ class Repository implements RepositoryContract, Dispatchable
 	}
 
 	/**
+	* Starts and runs the router.
+	*
 	* @access 	public
 	* @return 	void
 	*/
 	public function run()
 	{
 		$this->routeBuilder->buildRoute($this);
-		if (empty(Bag::getAccessedRoute()) && intval($this->routeBuilder->__build) !== 1) {
 
+		if (empty(Bag::getAccessedRoute()) && intval($this->routeBuilder->__build) !== 1) {
 			if (config('router')->get('throw_404_error') == true) {
-				$errorException = config('router')->get('404_error_exception');
-				throw new $errorException(sprintf("Route %s not registered.", $this->getRequestUri(true)));
-			
+				throw new RouteNotFoundException(
+					sprintf(
+						'Route [%s] not registered.',
+						$this->getRequestUri(true)
+					)
+				);
 			}
 
-			return;
+			return false;
 		}
 
 		// Run validation on route slugs/parameters...
