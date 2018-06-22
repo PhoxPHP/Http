@@ -31,21 +31,21 @@ class RouteNotFoundException extends BaseException implements ExceptionContract
 
 	/**
 	* @var 		$code
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$code = 404;
+	public 		$code = 404;
 
 	/**
 	* @var 		$message
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$message;
+	public 		$message;
 
 	/**
 	* @var 		$view
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$view;
+	public 		$view;
 
 	/**
 	* {@inheritDoc}
@@ -79,30 +79,6 @@ class RouteNotFoundException extends BaseException implements ExceptionContract
 	public function setView(String $view)
 	{
 		$this->view = $view;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getResponseCode() : int
-	{
-		return $this->code;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getExceptionMessage() : String
-	{
-		return $this->message;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getView() : String
-	{
-		return $this->view;
 	}
 
 }

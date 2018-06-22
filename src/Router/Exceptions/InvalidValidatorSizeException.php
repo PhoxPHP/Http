@@ -34,21 +34,21 @@ class InvalidValidatorSizeException extends BaseException implements ExceptionCo
 
 	/**
 	* @var 		$code
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$code = 404;
+	public 		$code = 500;
 
 	/**
 	* @var 		$message
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$message;
+	public 		$message;
 
 	/**
 	* @var 		$view
-	* @access 	protected
+	* @access 	public
 	*/
-	protected 	$view;
+	public 		$view;
 
 	/**
 	* @param 	$options <Array>
@@ -57,10 +57,8 @@ class InvalidValidatorSizeException extends BaseException implements ExceptionCo
 	*/
 	public function __construct(...$options)
 	{
-		$this->setCode(404);
 		$this->setView('exception');
 		$this->setMessage($options[0]);
-		parent::__construct();
 	}
 
 	/**
@@ -86,29 +84,5 @@ class InvalidValidatorSizeException extends BaseException implements ExceptionCo
 	{
 		$this->view = $view;
 	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getExceptionCode() : int
-	{
-		return $this->code;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getExceptionMessage() : String
-	{
-		return $this->message;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public function getView() : String
-	{
-		return $this->view;
-	}}
 
 }
