@@ -30,7 +30,10 @@ use	Kit\Http\Router\Middleware;
 use	Kit\Http\Router\Repository;
 use	Kit\Http\Router\Contracts\Dispatchable;
 use	Kit\Http\Router\Contracts\DispatcherContract;
+use Kit\Http\Router\Exceptions\InvalidMethodException;
+use Kit\Http\Router\Exceptions\MethodNotFoundException;
 use Kit\Http\Router\Validators\RouteCallbackTypeValidator;
+use Kit\Http\Router\Exceptions\ControllerNotFoundException;
 
 class Dispatcher implements DispatcherContract
 {
@@ -101,7 +104,12 @@ class Dispatcher implements DispatcherContract
 		$controller = $array[1];
 
 		if (!class_exists($controller)) {
-			throw new RuntimeException(sprintf("Unable to load {%s} controller.", $controller));		
+			throw new ControllerNotFoundException(
+				sprintf(
+					'Controller [%s] does not exist.',
+					$controller
+				)
+			);		
 		}
 
 		$loader = new ClassLoader();
@@ -113,18 +121,18 @@ class Dispatcher implements DispatcherContract
 		$action = $array[2];
 
 		if ($action == '__construct') {
-			throw new RuntimeException(
+			throw new InvalidMethodException(
 				sprintf(
-					'Cannot call %s method as an action',
+					'Cannot call [%s] method as an action',
 					'__construct'
 				)
 			);
 		}
 
 		if (!method_exists($this->controller, $action)) {
-			throw new RuntimeException(
+			throw new MethodNotFoundException(
 				sprintf(
-					'Method {%s} not found in {%s} controller',
+					'Method [%s] not found in [%s] controller',
 					$action,
 					$controller
 				)
