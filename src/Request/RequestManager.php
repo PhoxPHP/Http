@@ -197,8 +197,9 @@ class RequestManager
 	* @access 	public
 	* @return 	void
 	*/
-	public function __construct()
+	public function __construct(String $url = '')
 	{
+		$this->url = $url;
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->put = $_POST;
@@ -263,11 +264,13 @@ class RequestManager
 	* @access 	public
 	* @return 	Response
 	*/
-	public function get($url)
+	public function get(String $url = '')
 	{
-		$this->url = $url;
-		$this->method = $this->requestMethods['get'];
+		if ($url !== '') {
+			$this->url = $url;
+		}
 
+		$this->method = $this->requestMethods['get'];
 		$request = $this->doRequest();
 		return $request;
 	}
@@ -279,11 +282,13 @@ class RequestManager
 	* @access 	public
 	* @return 	Response
 	*/
-	public function put($url)
+	public function put(String $url = '')
 	{
-		$this->url = $url;
-		$this->method = $this->requestMethods['put'];
+		if ($url !== '') {
+			$this->url = $url;
+		}
 
+		$this->method = $this->requestMethods['put'];
 		$request = $this->doRequest();
 		return $request;
 	}
@@ -295,11 +300,13 @@ class RequestManager
 	* @access 	public
 	* @return 	Response
 	*/
-	public function delete($url)
+	public function delete(String $url = '')
 	{
-		$this->url = $url;
-		$this->method = $this->requestMethod['delete'];
+		if ($url !== '') {
+			$this->url = $url;
+		}
 
+		$this->method = $this->requestMethod['delete'];
 		$request = $this->doRequest();
 		return $request;
 	}
@@ -311,10 +318,12 @@ class RequestManager
 	* @access 	public
 	* @return 	Response
 	*/
-	public function post($url) {
-		$this->url = $url;
-		$this->method = $this->requestMethods['post'];
+	public function post(String $url = '') {
+		if ($url !== '') {
+			$this->url = $url;
+		}
 
+		$this->method = $this->requestMethods['post'];
 		$request = $this->doRequest();
 		return $request;
 	}
@@ -326,10 +335,12 @@ class RequestManager
 	* @access 	public
 	* @return 	Response
 	*/
-	public function head($url) {
-		$this->url = $url;
-		$this->method = $this->requestMethods['head'];
+	public function head(String $url = '') {
+		if ($url !== '') {
+			$this->url = $url;
+		}
 
+		$this->method = $this->requestMethods['head'];
 		$request = $this->doRequest();
 		return $request;
 	}	
@@ -905,10 +916,10 @@ class RequestManager
 	*
 	* @param 	$url String
 	* @param 	$parameters <Array>
-	* @access 	private
+	* @access 	protected
 	* @return 	String
 	*/
-	private function buildUrl($url, array $parameters = [])
+	protected function buildUrl($url, array $parameters = [])
 	{
 		$parameters = http_build_query($parameters);
 		return $url.'?'.$parameters;
@@ -916,10 +927,10 @@ class RequestManager
 
 	/**
 	* @param 	$fgc <Boolean>
-	* @access 	private
+	* @access 	protected
 	* @return 	Array
 	*/
-	private function resolveHeaders($fgc=false)
+	protected function resolveHeaders($fgc=false)
 	{
 		(Array) $headers = [];
 		$headerValue = array_values($this->headers);
@@ -940,10 +951,10 @@ class RequestManager
 	* Strips query string parameters from a url if any.
 	*
 	* @param 	$url String
-	* @access 	private
+	* @access 	protected
 	* @return 	String
 	*/
-	private function getCleanUrl($url='')
+	protected function getCleanUrl($url='')
 	{
 		$preg = preg_match("/\?(.*?)/", $url, $match);
 
@@ -963,12 +974,12 @@ class RequestManager
 	* @param 	$protocol String
 	* @param 	$ip String
 	* @param 	$port Integer
-	* @access 	private
+	* @access 	protected
 	* @return 	String
 	*/
-	private function createProxy($protocol='tcp', $ip='', $port='')
+	protected function createProxy($protocol='tcp', $ip='', $port='')
 	{
-		return $protocol.'://'.$ip.':'.$port;
+		return $protocol . '://' . $ip . ':' . $port;
 	}
 
 }
