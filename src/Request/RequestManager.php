@@ -48,6 +48,12 @@ class RequestManager
 	* @access 	private
 	*/
 	private 	$requestUrl;
+
+	/**
+	* @var 		$options
+	* @access 	protected
+	*/
+	protected 	$options = [];
 	
 	/**
 	* @var 		$headers
@@ -89,7 +95,7 @@ class RequestManager
 	* @var 		$requestWrapper
 	* @access 	private
 	*/
-	private static $requestWrapper;
+	private static $requestWrapper = 'http';
 
 	/**
 	* @var 		$requestParameters
@@ -253,7 +259,7 @@ class RequestManager
 	/**
 	* Sends a GET request.
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	public
 	* @return 	Response
 	*/
@@ -269,7 +275,7 @@ class RequestManager
 	/**
 	* Sends a PUT request.
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	public
 	* @return 	Response
 	*/
@@ -285,7 +291,7 @@ class RequestManager
 	/**
 	* Sends a DELETE request.
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	public
 	* @return 	Response
 	*/
@@ -301,7 +307,7 @@ class RequestManager
 	/**
 	* Sends a POST request
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	public
 	* @return 	Response
 	*/
@@ -316,7 +322,7 @@ class RequestManager
 	/**
 	* Sends a HEAD request
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	public
 	* @return 	Response
 	*/
@@ -371,7 +377,7 @@ class RequestManager
 	/**
 	* Returns a request input from global $_REQUEST variable.
 	*
-	* @param 	$key <String>
+	* @param 	$key String
 	* @access 	public
 	* @return 	Mixed
 	*/
@@ -439,7 +445,7 @@ class RequestManager
 	/**
 	* Checks if the request path matches @param $path.
 	*
-	* @param 	$path 	<String>
+	* @param 	$path 	String
 	* @param 	$option Request::PARTIAL|Request::FULL
 	* @access 	public
 	* @return 	Boolean
@@ -500,7 +506,7 @@ class RequestManager
 	}
 
 	/**
-	* @param 	$proxyName <String>
+	* @param 	$proxyName String
 	* @param 	$tunnelProxy <Boolean>
 	* @access 	public
 	* @return 	Array
@@ -520,33 +526,30 @@ class RequestManager
 	/**
 	* Sets authentication username and password.
 	*
-	* @param 	$username <String>
-	* @param 	$password <String>
-	* @param 	$authenticationType <String>
+	* @param 	$username String
+	* @param 	$password String
+	* @param 	$authenticationType String
 	* @access 	public
 	* @return 	void
 	*/
-	public function authorize($username='', $password='', $authenticationType='basic')
+	public function authorize($username = '', $password = '', $authenticationType = 'basic')
 	{
 		RequestManager::$authentication['username'] = $username;
 		RequestManager::$authentication['password'] = $password;
-		try {
-			if (null == $this->getAuthConfig($authenticationType, "")) {
-				throw new InvalidAuthenticationTypeException(
-					sprintf("Authentication type %s is not available.",$authenticationType)
-				);
-			}
-			$this->authenticationType = $authenticationType;
-		}catch(InvalidAuthenticationTypeException $e) {
-			exit($e->getMessage());
-		}		
+		if (null == $this->getAuthConfig($authenticationType, '')) {
+			throw new \InvalidArgumentException(
+				sprintf("Authentication type %s is not available.",$authenticationType)
+			);
+		}
+		
+		$this->authenticationType = $authenticationType;
 	}
 
 	/**
 	* Appends request header.
 	*
-	* @param 	$key <String> | null
-	* @param 	$value <String> | null
+	* @param 	$key String | null
+	* @param 	$value String | null
 	* @access 	public
 	* @return 	void
 	*/
@@ -559,7 +562,7 @@ class RequestManager
 	* Tells FGC(file_get_contents) request what http wrapper to use.
 	* A valid wrapper is expected.
 	*
-	* @param 	$wrapper <String>
+	* @param 	$wrapper String
 	* @access 	public
 	* @return 	void
 	*/
@@ -571,7 +574,7 @@ class RequestManager
 	/**
 	* Appends url parameters that will be sent in a request.
 	*
-	* @param 	$parameter <String>
+	* @param 	$parameter String
 	* @param 	$value <Mixed>
 	* @access 	public
 	* @return 	void
@@ -584,7 +587,7 @@ class RequestManager
 	/**
 	* Sets the request timeout.
 	*
-	* @param 	$time <Integer> {in seconds}
+	* @param 	$time Integer {in seconds}
 	* @access 	public
 	* @return 	void
 	*/
@@ -596,14 +599,16 @@ class RequestManager
 	}
 
 	/**
-	* @param 	$response <Object> \Http\Response\Interfaces\ResponseInterface 
+	* Sets a custom curl option.
+	*
+	* @param 	$key Mixed
+	* @param 	$value Mixed
 	* @access 	public
-	* @return 	Object
-	* @deprecated
+	* @return 	Void
 	*/
-	public function getReponse(Response $response) : Response
+	public function setOption($key, $value)
 	{
-		return $this->response = $response;
+		$this->options[$key] = $value;
 	}
 
 	/**
@@ -646,7 +651,7 @@ class RequestManager
 	}
 
 	/**
-	* @param 	$key <String>
+	* @param 	$key String
 	* @access 	private
 	* @return 	String
 	*/
@@ -671,15 +676,16 @@ class RequestManager
 	/**
 	* Returns configuration for authorization type provided.
 	*
-	* @param 	$key <String>
-	* @param 	$authInfo <String>
+	* @param 	$key String
+	* @param 	$authInfo String
 	* @access 	private
 	* @return 	Object|Boolean
 	*/
 	private function getAuthConfig($key='', $authInfo='')
 	{
 		$config = [
-			'basic' => ['option' => $this->getConfig('auth_basic'), 'value' => "Authorization: Basic ".base64_encode($authInfo)],
+			'basic' => ['option' => $this->getConfig('auth_basic'), 'value' => 'Authorization: Basic ' . base64_encode($authInfo)],
+			'oauth' => ['option' => $this->getConfig('auth'), 'value' => 'Authorization: OAuth ' . base64_encode($authInfo)],
 			'digest' => ['option' => $this->getConfig('auth_digest'), 'value' => $authInfo]
 		];
 
@@ -698,33 +704,24 @@ class RequestManager
 	private function doRequest() : Response
 	{
 		if (!in_array($this->method, array_values($this->requestMethods))) {
-
 			throw new Exception(sprintf("Unresolved method %s", $this->method));
-		
 		}
 
 		$this->method = $this->requestMethods[strtolower($this->method)];
 		
 		if (false == RequestManager::$curlRequest) {
-
 			return $this->doFileRequest();
-
 		}
 
 		(Array)  $headers = $this->resolveHeaders();
-
 		(String) $customRequest = '';
 
 		if (!empty($this->requestParameters)) {
-
 			$this->url = $this->buildUrl($this->url, $this->requestParameters);
-
 		}
 
 		if (!function_exists('curl_init') || !extension_loaded('curl')) {
-
 			throw new \RuntimeException('Curl extension is not available.');
-
 		}
 
 		$this->curlChannel = curl_init($this->url);
@@ -736,41 +733,30 @@ class RequestManager
 		if ($this->method == 'POST' || $this->method == 'PUT' || $this->method == 'DELETE') {
 
 			curl_setopt($this->curlChannel, CURLOPT_POST, 1);
-
 			curl_setopt($this->curlChannel, CURLOPT_POSTFIELDS, http_build_query($this->requestParameters));
 
 			// If no content-type is specified, set an automatic content type.
 			if (!isset($this->headers['Content-type']) || !isset($this->headers['Content-Type']) || !isset($this->headers['content-type'])) {
-
 				$this->headers['Content-Type'] = 'application/x-www-form-urlencoded';
-
 			}
 
 		}
 
 		// Is disableSSL property true? tell CURL to disable ssl.
 		if (true == RequestManager::$disableSSL) {
-
 			curl_setopt($this->curlChannel, CURLOPT_SSL_VERIFYPEER, false);
-			
 			curl_setopt($this->curlChannel, CURLOPT_SSL_VERIFYHOST, false);
-		
 		}
 
 		if (boolval($this->proxyRequest) == true) {
 
 			$proxyIp = (isset($this->attachedProxy->address)) ? $this->attachedProxy->address : ProxyManager::$defaultProxyIp;
-			
 			$proxyPort = (isset($this->attachedProxy->port)) ? $this->attachedProxy->port : ProxyManager::$defaultProxyPort;
-
 			curl_setopt($this->curlChannel, $this->getConfig('proxy'), $proxyIp);
-			
 			curl_setopt($this->curlChannel, $this->getConfig('proxy_port'), $proxyPort);
 
 			if (ctype_digit($this->tunnelProxy) && intval($this->tunnelProxy) == 1) {
-			
 				curl_setopt($this->curlChannel, $this->getConfig('proxy_http_tunnel'), 1);
-			
 			}
 		}
 
@@ -779,50 +765,47 @@ class RequestManager
 			$authenticationType = $this->authenticationType;		
 			
 			$username = RequestManager::$authentication['username'];
-			
 			$password = RequestManager::$authentication['password'];
 			
 			$authenticationTypeConfig = $this->getAuthConfig(
 				$authenticationType,
-				$username.":".$password
+				$username . ':' . $password
 			);
 
 			$authenticationTypeConfigOption = $authenticationTypeConfig->option;
-			
 			$authenticationTypeConfigValue = $authenticationTypeConfig->value;
-			
-			$authenticationInfoStapler = (boolval($this->proxyRequest) == true) ? $this->getConfig('proxy_auth') : $this->getConfig('auth');
-			
-			$authInfo = (boolval($this->proxyRequest) == true) ? $username.":".$password : $authenticationTypeConfigValue;
+			$authenticationInfoStapler = $this->getConfig('proxy_auth');
 
-			curl_setopt($this->curlChannel, $authenticationInfoStapler, $authInfo);
+			if (boolval($this->proxyRequest) !== true) {
+				$authenticationInfoStapler = $this->getConfig('auth');
+			}
+
+			curl_setopt($this->curlChannel, $authenticationInfoStapler, $username . ':' . $password);
 
 			if (boolval($this->proxyRequest) == false) {
-			
 				curl_setopt($this->curlChannel, CURLOPT_HTTPAUTH, $authenticationTypeConfigOption);
-			
 			}
 		}
 
 		if (ctype_digit($this->timeout) && $this->timeout > 0) {
-			
 			curl_setopt($this->curlChannel, CURLOPT_TIMEOUT, $this->timeout);
-		
 		}
 
 		curl_setopt($this->curlChannel, CURLOPT_CONNECTTIMEOUT, 0);
 
 		if (sizeof($this->headers) > 0) {
-		
 			curl_setopt($this->curlChannel, CURLOPT_HTTPHEADER, $this->headers);
-		
 		}
 
 		curl_setopt($this->curlChannel, CURLOPT_HEADER, 1);
-		
 		curl_setopt($this->curlChannel, CURLOPT_VERBOSE, 1);
-		
 		curl_setopt($this->curlChannel, CURLOPT_HEADER, 1);
+
+		if (sizeof(array_keys($this->options)) > 0) {
+			foreach($this->options as $key => $option) {
+				curl_setopt($this->curlChannel, $key, $option);
+			}
+		}
 		
 		$response = curl_exec($this->curlChannel);		
 		$this->response = curl_getinfo($this->curlChannel);
@@ -832,7 +815,6 @@ class RequestManager
 		
 		$body = substr($response, $headerSize);
 		$this->error = curl_error($this->curlChannel);
-
 		$this->errorNo = curl_errno($this->curlChannel);
 
 		curl_close($this->curlChannel);
@@ -840,9 +822,9 @@ class RequestManager
 		/**
 		* Returns \Http\Response
 		*
-		* @param 	\Http\Request $this | Injected into response constructor.
-		* @param 	$body String | Response body.
-		* @param 	$header String | Response header resolved from CURL.
+		* @param 	$this Http\Request 
+		* @param 	$body String
+		* @param 	$header String
 		*/
 		return new Response($this, $body, $header);
 	}
@@ -860,9 +842,7 @@ class RequestManager
 		$requestWrappers = ['http'];
 		
 		if (!in_array(RequestManager::$requestWrapper, $requestWrappers)) {
-
 			throw new Exception(sprintf("Http wrapper %s not accecpted.", RequestManager::$requestWrapper));
-		
 		}
 
 		$wrapper = RequestManager::$requestWrapper;
@@ -876,33 +856,24 @@ class RequestManager
 		}
 
 		if (!empty(RequestManager::$authentication)) {
-		
 			$username = RequestManager::$authentication['username'];
-		
 			$password = RequestManager::$authentication['password'];
-
 			$this->headers['Authorization'] = 'Basic '.base64_encode($username.':'.$password);
 		}
 
 		$headers = $this->resolveHeaders(true);
 		
-		if (gettype($headers)=='array' && !empty($headers)) {
-		
+		if (gettype($headers) == 'array' && !empty($headers)) {
 			$headers = implode("\r\n", $headers[0]);
-		
 		}
 
 		$requestWrapperStreamContext['header'] = $headers;
 		$requestWrapperStreamContext['timeout'] = (Integer) $this->timeout;
 
 		if (boolval($this->proxyRequest) == true) {
-		
 			$proxyIp = (isset($this->attachedProxy->address)) ? $this->attachedProxy->address : ProxyManager::$defaultProxyIp;
-		
 			$proxyPort = (isset($this->attachedProxy->port)) ? $this->attachedProxy->port : ProxyManager::$defaultProxyPort;
-
 			$requestWrapperStreamContext['proxy'] = $this->createProxyUrl('tcp', $proxyIp, $proxyPort);
-		
 		}
 
 		$requestContext = [
@@ -932,7 +903,7 @@ class RequestManager
 	* Creates a full url with query string parameters by calling http_build_query on
 	* @param $parameters array and then concatenating it with @param $url.
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @param 	$parameters <Array>
 	* @access 	private
 	* @return 	String
@@ -956,11 +927,8 @@ class RequestManager
 		foreach(array_keys($this->headers) as $i => $key) {
 		
 			if (true == gettype($fgc)) {
-		
 				$headers[] = "$key: $headerValue[$i]\r\n";
-		
 			}else{
-		
 				$headers[] = [$key.': '.$headerValue[$i]];
 			}
 		}
@@ -971,7 +939,7 @@ class RequestManager
 	/**
 	* Strips query string parameters from a url if any.
 	*
-	* @param 	$url <String>
+	* @param 	$url String
 	* @access 	private
 	* @return 	String
 	*/
@@ -992,9 +960,9 @@ class RequestManager
 	* Builds a proxy url from three parameters passed as arguments
 	* to this method.
 	*
-	* @param 	$protocol <String>
-	* @param 	$ip <String>
-	* @param 	$port <Integer>
+	* @param 	$protocol String
+	* @param 	$ip String
+	* @param 	$port Integer
 	* @access 	private
 	* @return 	String
 	*/
