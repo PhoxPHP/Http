@@ -805,7 +805,11 @@ class RequestManager
 		curl_setopt($this->curlChannel, CURLOPT_CONNECTTIMEOUT, 0);
 
 		if (sizeof($this->headers) > 0) {
-			curl_setopt($this->curlChannel, CURLOPT_HTTPHEADER, $this->headers);
+			$headers = [];
+			foreach($this->headers as $key => $value) {
+				$headers[] = $key . ':' . $value;
+			}
+			curl_setopt($this->curlChannel, CURLOPT_HTTPHEADER, $headers);
 		}
 
 		curl_setopt($this->curlChannel, CURLOPT_HEADER, 1);
