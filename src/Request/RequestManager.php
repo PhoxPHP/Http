@@ -203,6 +203,7 @@ class RequestManager
 		$this->get = $_GET;
 		$this->post = $_POST;
 		$this->put = $_POST;
+		RequestManager::$authentication = [];
 	}
 
 	/**
