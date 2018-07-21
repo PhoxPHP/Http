@@ -86,14 +86,14 @@ class Response
 	/**
 	* Return the body of a response.
 	*
-	* @param 	$setDecode <Boolean>
+	* @param 	$decode <Boolean>
 	* @access 	public
 	* @return 	String
 	*/
-	public function body($setDecode=false)
+	public function body($decode = false)
 	{
 		$body = $this->body;
-		return ($setDecode == true) ? html_entity_decode($body) : $body;
+		return ($decode == true) ? json_decode($body) : $body;
 	}
 
 	/**
@@ -112,9 +112,7 @@ class Response
 			$preg = preg_match("/[0-9][0-9][0-9]/", $httpCodeSegment, $match);
 
 			if ($preg) {
-
 				$this->request->http_code = $match[0];
-
 			}
 		}
 
@@ -131,9 +129,7 @@ class Response
 	public function contentType($contentType='')
 	{
 		if ('' !== $contentType) {
-
 			$this->request->content_type = $contentType;
-		
 		}
 		
 		return $this->request->content_type;
@@ -316,11 +312,8 @@ class Response
 		$header = array_map([$this, 'resolveHeaderName'], $headers);
 
 		foreach($header as $value) {
-
 			if (isset($value[$key])) {
-			
 				(String) $responseheader = $value[$key];
-			
 			}
 
 		}
