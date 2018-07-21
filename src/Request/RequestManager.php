@@ -259,6 +259,23 @@ class RequestManager
 	}
 
 	/**
+	* Calls RequestManager methods statically.
+	*
+	* @param 	$method String
+	* @param 	$params Array
+	* @access 	public
+	* @return 	Mixed
+	* @static
+	*/
+	public static function __callStatic(String $method, Array $params)
+	{
+		return call_user_func_array([
+			new self(),
+			$method
+		], $params);
+	}
+
+	/**
 	* Sends a GET request.
 	*
 	* @param 	$url String
