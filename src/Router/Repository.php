@@ -384,7 +384,7 @@ class Repository implements RepositoryContract, Dispatchable
 	* @access 	public
 	* @return 	Mixed
 	*/
-	public static function route(String $name='')
+	public static function getRoute(String $name='')
 	{
 		if (Alias::hasAlias($name)) {
 			return Alias::getAlias($name);
